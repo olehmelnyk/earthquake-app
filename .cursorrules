@@ -1,12 +1,150 @@
-# General rules
+# Earthquake App - Development Rules
+
+## Context for Take-Home Assignment
+
+This project is a take-home assignment for a job interview. Focus on:
+- **Simplicity**: Avoid overengineering or implementing advanced features unless explicitly requested.
+- **Readability**: Write clean, self-documenting code that demonstrates your skills.
+- **Core Skills**: Prioritize demonstrating core competencies (e.g., API design, database interactions, frontend-backend integration).
+- **Polish Over Perfection**: Since this is not a production project, focus on a polished demo rather than enterprise-level infrastructure.
+- **Time Management**: Prioritize completing core requirements over adding extra features.
+
+## Notes for Real-World Considerations
+
+In a real-world project, the following would be considered:
+- **Scalability**: Plan for horizontal scaling, caching, and database optimization.
+- **Security**: Implement authentication, rate limiting, and data encryption.
+- **Monitoring**: Add logging, error tracking, and performance monitoring.
+- **CI/CD**: Set up automated testing and deployment pipelines.
+- **User Feedback**: Gather and prioritize user feedback for iterative improvements.
+
+## Technical Stack
+
+- typescript (https://www.typescriptlang.org/)
+- package manager - pnpm (https://pnpm.io/)
+- monorepo - https://nx.dev/
+- formatting - eslint + prettier
+- database - PostgresSQL (https://www.postgresql.org/)
+- ORM - prisma.io (https://www.prisma.io/)
+- react (https://react.dev/)
+- nextjs (https://nextjs.org/)
+- docker (https://www.docker.com/)
+- UI library - Shadcn UI (https://ui.shadcn.com/)
+- API - GraphQL (https://github.com/apollographql/apollo-server and https://github.com/apollographql/apollo-client)
+
+## Important Instructions
+
+- DO NOT modify `requirements.md` file
+- never use type `any`
+- always use a proper cli command for shadcn ui - example: `pnpm dlx shadcn@latest add button`
+- use tailwindcss for styling (https://tailwindcss.com/)
+- use zod for validation (https://zod.dev/)
+- graphql - https://graphql.org/
+- prefer SWC over babel
+- prefer functional components over class components
+- prefer named exports over default exports
+- prefer arrow functions
+- prefer destructuring
+- prefer async/await over promises
+- prefer template literals over string concatenation
+- use eslint and prettier
+- use tsx extension for react components
+- use proper types for all variables, functions, components, etc.
+- write descriptive tests
 
 ## Coding Principles
 
 - **SOLID**: Follow Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion.
 - **DRY**: Avoid duplication by reusing existing utilities, helpers, or patterns.
 - **KISS**: Prioritize simple, readable, and maintainable solutions.
-- **YAGNI**: Only implement what’s needed now; avoid speculative features.
+- **YAGNI**: Only implement what's needed now; avoid speculative features.
 - **GRASP**: Ensure low coupling, high cohesion, and clear responsibility assignment.
+
+## Code Structure and Architecture
+
+- Backend code should be organized in `/apps/backend` or `/packages/backend`
+- Frontend code should be organized in `/apps/frontend` or `/packages/frontend`
+- Shared types and utilities go in `/packages/shared`
+- Use GraphQL for all API operations
+- Database models should match GraphQL schema structure
+- Follow a clear folder structure for separation of concerns
+
+## Naming Conventions
+
+- React components: PascalCase (e.g., `EarthquakeList.tsx`)
+- Files: kebab-case except for React components (e.g., `import-csv.ts`)
+- GraphQL types: PascalCase (e.g., `type Earthquake`)
+- Database fields: camelCase (e.g., `magnitude`, `date`)
+- Environment variables: UPPER_SNAKE_CASE (e.g., `DATABASE_URL`)
+- Test files: Component name followed by `.test.ts(x)` or `.spec.ts(x)`
+
+## TypeScript Best Practices
+
+- Enforce strict TypeScript mode in all tsconfig files
+- Never use `any` type - use `unknown` where necessary
+- Create explicit interfaces for all data structures
+- Use type guards for narrowing types
+- Use generics for reusable components/functions
+- Avoid type assertions except when absolutely necessary
+- Define return types for all functions/methods
+
+## Code Quality Standards
+
+- All code must pass ESLint and Prettier checks
+- Use functional components with hooks for React
+- Prefer async/await over Promise chains
+- Use destructuring for props and state
+- Limit function/component complexity (max ~50 lines)
+- Add JSDoc comments for public APIs and complex functions
+- Maximum line length: 100 characters
+- No unused variables or imports
+- No console logs in production code (use proper logging service)
+
+## Testing Requirements
+
+- Write tests before or alongside code
+- Unit tests for all backend services and resolvers
+- Component tests for all frontend components
+- Integration tests for GraphQL operations
+- Aim for minimum 80% code coverage
+- Mock external services and database calls in tests
+- Use descriptive test names following "it should..." pattern
+
+## Error Handling
+
+- Use custom error classes for different error types
+- Validate all user inputs with Zod schemas
+- Return descriptive error messages from GraphQL resolvers
+- Implement global error handling for uncaught exceptions
+- Log all errors with appropriate severity levels
+- Handle errors gracefully in the UI with user-friendly messages
+
+## Performance Considerations
+
+- Use pagination for all list queries
+- Add appropriate database indexes
+- Optimize frontend rendering for large datasets
+- Implement DataLoader for N+1 query prevention
+- Add proper caching strategies where appropriate
+- Use server-side rendering for initial page loads
+
+## Accessibility Standards
+
+- Follow WCAG 2.1 AA guidelines
+- Ensure proper keyboard navigation
+- Add appropriate ARIA attributes
+- Maintain color contrast ratios
+- Support screen readers
+- Test with accessibility tools
+
+## Git Workflow (Simplified for Take-Home Assignment)
+
+- Create a well-organized Git repository
+- Use meaningful commit messages
+- Include a .gitignore file for node_modules, build files, etc.
+- Commit frequently with logical chunks of work
+- Consider adding tags for major milestones
+- Ensure the final submission is on the main branch
 
 ## Code Change Rules
 
@@ -24,107 +162,16 @@
 - **Modularity**: Break code into small, reusable functions or modules following the single responsibility principle and existing module patterns.
 - **Immutability**: Favor immutability (e.g., `const`, spread operators) to reduce side effects, matching existing practices.
 - **Error Handling**: Use try/catch for async operations, return meaningful errors, and follow existing error-handling patterns (e.g., custom `ApiError` classes).
-- **Type Safety (TypeScript)**:
-  - Avoid `any`; use specific types or interfaces aligned with existing type definitions.
-  - Use union types, generics, and type guards where applicable, following codebase norms.
-  - Follow existing type naming (e.g., `IUser` vs. `User` vs. `TUser`).
-- **Performance**: Avoid unnecessary loops, deep nesting, or excessive re-renders (e.g., in React projects), consistent with existing optimizations.
-- **Documentation**: Add concise JSDoc or inline comments for complex logic, matching the project’s documentation style. Do not add docs for simple/obvious logic.
 - **Consistency with Existing Code**: Mimic the tone, structure, and style of the codebase (e.g., functional vs. OOP, camelCase vs. kebab-case).
 - **Use Internal Helpers**: Prefer internal utilities (e.g., `src/utils/apiFetch`) over generic solutions if they exist.
-- **Avoid Over-Abstraction**: Match the abstraction level of the codebase—don’t introduce complex patterns (e.g., HOCs, custom hooks) unless already in use.
+- **Avoid Over-Abstraction**: Match the abstraction level of the codebase—don't introduce complex patterns (e.g., HOCs, custom hooks) unless already in use.
 
-## Testing Rules
+## Demonstration Focus (Take-Home Specific)
 
-1. **TDD/BDD Enforcement**: Write tests before or alongside code (TDD by default; BDD if specified with tools like Cucumber).
-2. **Match Existing Test Patterns**: Use the project’s testing framework (e.g., Jest, Mocha, Vitest) and style (e.g., describe/it, expect assertions).
-3. **Test Types**:
-   - Unit tests for individual functions/modules.
-   - Integration tests for combined functionality if present in the codebase.
-   - Avoid UI/end-to-end tests unless explicitly requested.
-4. **Test Best Practices**:
-   - Write clear, independent tests with arrange-act-assert structure.
-   - Mock external dependencies (e.g., APIs, databases) consistently with existing mocks.
-   - Aim for 80%+ coverage of new/changed code.
-   - Follow existing test naming and organization (e.g., **tests**/file.test.ts).
-5. **Minimal Test Changes**: Update existing tests only to reflect functional changes; avoid refactoring test suites.
-
-## Tooling and Libraries
-
-1. **Use Existing Tools**: Stick to the project’s package manager (npm/yarn/pnpm) and dependencies unless directed otherwise.
-2. **TypeScript Best Practices**: Enable strict mode, use unknown over any, and align with existing tsconfig.json settings.
-3. **Linting/Formatting**: Follow ESLint/Prettier rules inferred from the codebase (e.g., semicolons, single quotes).
-4. **Build Tools**: Respect existing build setups (e.g., Webpack, Vite, Rollup) and avoid suggesting alternatives.
-5. **Internal Libraries**: Prioritize internal libraries or helpers over external ones if they meet the need.
-
-## Error Handling
-
-1. **Fix, Don’t Rewrite**: Propose targeted fixes that preserve structure rather than overhauling code.
-2. **Graceful Degradation**: Ensure code fails safely and logs errors appropriately (e.g., `console.error` or existing logging utils).
-3. **Ask for Clarification**: If unsure about patterns, intent, or requirements, ask the user instead of assuming.
-4. **Match Error Patterns**: Use existing error classes or conventions (e.g., throw new CustomError()).
-
-## Collaboration and Maintainability
-
-1. **Version Control**: Assume Git is used; suggest branch naming (e.g., feat/JIRA-1234-add-user-fetch) if relevant.
-2. **Code Reviews**: Format code and plans to be easily shareable with team members.
-3. **Backward Compatibility**: Avoid breaking changes unless explicitly requested; suggest deprecation strategies if needed.
-4. **Audit Trail**: Ensure commits and plans provide a clear history of changes.
-
-## Output Format
-
-1. **Code Snippets**: Use typescript or javascript blocks with explanations:
-
-```typescript
-// Define user data interface
-interface UserData {
-  id: number;
-  name: string;
-  email: string;
-}
-```
-
-2. **Development Plan**: Output plans in Markdown format as shown above.
-3. **Suggestions**: Present optional improvements (e.g., “Consider using axios for better error handling”) but wait for confirmation.
-
-## Restrictions
-
-1. **No Overriding**: Do not refactor or override large code sections unless explicitly requested.
-2. **No Unapproved Libraries**: Suggest new dependencies only with justification and await approval.
-
-## Technical stack
-
-- typescript (https://www.typescriptlang.org/)
-- package manager - pnpm (https://pnpm.io/)
-- monorepo - https://nx.dev/
-- frontend - NextJS (https://nextjs.org/)
-- backend - Express (https://expressjs.com/)
-- database - PostgreSQL (https://www.postgresql.org/)
-- testing - Jest (https://jestjs.io/)
-- docker - https://www.docker.com/
-- zod for validation (https://zod.dev/)
-- ORM - Prisma (https://www.prisma.io/)
-- UI library - Shadcn UI (https://ui.shadcn.com/)
-- API - GraphQL (https://github.com/apollographql/apollo-server and https://github.com/apollographql/apollo-client)
-
-## Important instructions
-
-- DO NOT modify `requirements.md` file
-- never use type `any`
-- always use a proper cli command for shadcn ui - example: `pnpm dlx shadcn@latest add button`
-
-## Context for Take-Home Assignment
-
-This project is a take-home assignment for a job interview. Focus on:
-- **Simplicity**: Avoid overengineering or implementing advanced features unless explicitly requested.
-- **Readability**: Write clean, self-documenting code that demonstrates your skills.
-- **Core Skills**: Prioritize demonstrating core competencies (e.g., API design, database interactions, frontend-backend integration).
-
-## Notes for Real-World Considerations
-
-In a real-world project, the following would be considered:
-- **Scalability**: Plan for horizontal scaling, caching, and database optimization.
-- **Security**: Implement authentication, rate limiting, and data encryption.
-- **Monitoring**: Add logging, error tracking, and performance monitoring.
-- **CI/CD**: Set up automated testing and deployment pipelines.
-- **User Feedback**: Gather and prioritize user feedback for iterative improvements.
+- **README Quality**: Create a professional, clear README that shows attention to detail
+- **Core Requirements**: Ensure all requirements in the assignment are met before adding extras
+- **Code Organization**: Demonstrate your ability to organize code in a maintainable way
+- **Error States**: Handle edge cases and show how the application responds to errors
+- **UI/UX Considerations**: Create a clean, intuitive interface even if not explicitly required
+- **Database Design**: Show thoughtful database schema design and relationships
+- **GraphQL Implementation**: Demonstrate proper understanding of GraphQL principles
