@@ -34,33 +34,6 @@
 - **Use Internal Helpers**: Prefer internal utilities (e.g., `src/utils/apiFetch`) over generic solutions if they exist.
 - **Avoid Over-Abstraction**: Match the abstraction level of the codebase—don’t introduce complex patterns (e.g., HOCs, custom hooks) unless already in use.
 
-## Development Process
-
-1. **Analyze Requirements**:
-   - Review user input or provided requirements to identify core needs and optional enhancements.
-   - Ask clarifying questions if requirements are ambiguous (e.g., “Does the API require authentication?”).
-2. **Task Breakdown**: Split tasks into the smallest possible chunks that can be independently tested and committed.
-   - Aim for an MVP-first approach: Deliver core functionality early, defer extra features/improvements to later steps.
-   - Include TDD as sub-tasks within each chunk where applicable.
-   - Write the plan to a `.md` file (e.g., `JIRA-1234-PLAN.md`) with checkboxes (`- [ ]`), step titles, time estimations, confidence levels, potential issues/uncertainties, and dependencies.
-   - Example:
-
-```markdown
-    # Development Plan: Fetch User Data from API
-
-    - [ ] 1. Define user data interface (estimation: 15m; confidence: 95%; potential issues: unclear API response shape; dependencies: none)
-    - [ ] 2. Implement basic fetch utility (MVP) (estimation: 20m; confidence: 90%; potential issues: auth token handling; dependencies: step 1)
-    - [ ] 2a. Write unit test for fetch utility (estimation: 15m; confidence: 85%; potential issues: mocking API; dependencies: step 2)
-    - [ ] 3. Add error handling to fetch utility (estimation: 15m; confidence: 90%; potential issues: custom error types; dependencies: step 2)
-    - [ ] 3a. Update unit test for error cases (estimation: 10m; confidence: 85%; dependencies: step 3)
-    - [ ] 4. Integrate into component (estimation: 45m; confidence: 80%; potential issues: state management conflicts; dependencies: step 3)
-    - [ ] 5. Add caching for fetch (optional enhancement) (estimation: 30m; confidence: 75%; potential issues: cache invalidation; dependencies: step 4)
-```
-
-2. **Implement Incrementally**: Work on one chunk at a time, verify it works (via tests or manual checks), then commit before moving to the next.
-3. **Commit Discipline**: Use small, focused commits with conventional commit messages (e.g., `feat: add user data interface`, `test: add fetch utility tests`).
-4. **Review Points**: Suggest a review after completing significant steps (e.g., MVP completion, tests passing) if collaboration is implied.
-
 ## Testing Rules
 
 1. **TDD/BDD Enforcement**: Write tests before or alongside code (TDD by default; BDD if specified with tools like Cucumber).
@@ -120,6 +93,7 @@ interface UserData {
 2. **No Unapproved Libraries**: Suggest new dependencies only with justification and await approval.
 
 ## Technical stack
+
 - typescript (https://www.typescriptlang.org/)
 - package manager - pnpm (https://pnpm.io/)
 - monorepo - https://nx.dev/
@@ -132,3 +106,25 @@ interface UserData {
 - ORM - Prisma (https://www.prisma.io/)
 - UI library - Shadcn UI (https://ui.shadcn.com/)
 - API - GraphQL (https://github.com/apollographql/apollo-server and https://github.com/apollographql/apollo-client)
+
+## Important instructions
+
+- DO NOT modify `requirements.md` file
+- never use type `any`
+- always use a proper cli command for shadcn ui - example: `pnpm dlx shadcn@latest add button`
+
+## Context for Take-Home Assignment
+
+This project is a take-home assignment for a job interview. Focus on:
+- **Simplicity**: Avoid overengineering or implementing advanced features unless explicitly requested.
+- **Readability**: Write clean, self-documenting code that demonstrates your skills.
+- **Core Skills**: Prioritize demonstrating core competencies (e.g., API design, database interactions, frontend-backend integration).
+
+## Notes for Real-World Considerations
+
+In a real-world project, the following would be considered:
+- **Scalability**: Plan for horizontal scaling, caching, and database optimization.
+- **Security**: Implement authentication, rate limiting, and data encryption.
+- **Monitoring**: Add logging, error tracking, and performance monitoring.
+- **CI/CD**: Set up automated testing and deployment pipelines.
+- **User Feedback**: Gather and prioritize user feedback for iterative improvements.
