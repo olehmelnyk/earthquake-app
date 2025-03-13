@@ -1,0 +1,134 @@
+# General rules
+
+## Coding Principles
+
+- **SOLID**: Follow Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion.
+- **DRY**: Avoid duplication by reusing existing utilities, helpers, or patterns.
+- **KISS**: Prioritize simple, readable, and maintainable solutions.
+- **YAGNI**: Only implement what’s needed now; avoid speculative features.
+- **GRASP**: Ensure low coupling, high cohesion, and clear responsibility assignment.
+
+## Code Change Rules
+
+- **Minimal Changes**: Apply the smallest possible change to achieve the goal; fix rather than rewrite.
+- **Follow Existing Patterns**: Match naming conventions, folder structure, async patterns (e.g., Promises vs. async/await), and coding style of the codebase.
+- **Reuse Existing Code**: Leverage existing snippets, utils, helpers, or internal libraries instead of creating new implementations.
+- **Library Preference**: Use built-in JavaScript methods, internal libraries, or established external libraries (e.g., `lodash`, `date-fns`, `axios`) over custom solutions or new dependencies.
+- **No Reinvention**: Avoid reimplementing functionality that exists in the codebase, internal libraries, or standard libraries unless explicitly requested.
+- **Analyze Existing Codebase**: Before suggesting changes, analyze the repo for existing patterns, guides, snippets, and helpers to ensure alignment.
+- **Respect Internal Conventions**: Use internal naming schemes (e.g., `utils/myHelper` vs. generic `helper`), existing error types, and established folder structures.
+
+## Best Practices
+
+- **Readability**: Write self-documenting code with meaningful variable/function names (e.g., `fetchUserData` vs. `getX`) consistent with codebase conventions.
+- **Modularity**: Break code into small, reusable functions or modules following the single responsibility principle and existing module patterns.
+- **Immutability**: Favor immutability (e.g., `const`, spread operators) to reduce side effects, matching existing practices.
+- **Error Handling**: Use try/catch for async operations, return meaningful errors, and follow existing error-handling patterns (e.g., custom `ApiError` classes).
+- **Type Safety (TypeScript)**:
+  - Avoid `any`; use specific types or interfaces aligned with existing type definitions.
+  - Use union types, generics, and type guards where applicable, following codebase norms.
+  - Follow existing type naming (e.g., `IUser` vs. `User` vs. `TUser`).
+- **Performance**: Avoid unnecessary loops, deep nesting, or excessive re-renders (e.g., in React projects), consistent with existing optimizations.
+- **Documentation**: Add concise JSDoc or inline comments for complex logic, matching the project’s documentation style. Do not add docs for simple/obvious logic.
+- **Consistency with Existing Code**: Mimic the tone, structure, and style of the codebase (e.g., functional vs. OOP, camelCase vs. kebab-case).
+- **Use Internal Helpers**: Prefer internal utilities (e.g., `src/utils/apiFetch`) over generic solutions if they exist.
+- **Avoid Over-Abstraction**: Match the abstraction level of the codebase—don’t introduce complex patterns (e.g., HOCs, custom hooks) unless already in use.
+
+## Development Process
+
+1. **Analyze Requirements**:
+   - Review user input or provided requirements to identify core needs and optional enhancements.
+   - Ask clarifying questions if requirements are ambiguous (e.g., “Does the API require authentication?”).
+2. **Task Breakdown**: Split tasks into the smallest possible chunks that can be independently tested and committed.
+   - Aim for an MVP-first approach: Deliver core functionality early, defer extra features/improvements to later steps.
+   - Include TDD as sub-tasks within each chunk where applicable.
+   - Write the plan to a `.md` file (e.g., `JIRA-1234-PLAN.md`) with checkboxes (`- [ ]`), step titles, time estimations, confidence levels, potential issues/uncertainties, and dependencies.
+   - Example:
+
+```markdown
+    # Development Plan: Fetch User Data from API
+
+    - [ ] 1. Define user data interface (estimation: 15m; confidence: 95%; potential issues: unclear API response shape; dependencies: none)
+    - [ ] 2. Implement basic fetch utility (MVP) (estimation: 20m; confidence: 90%; potential issues: auth token handling; dependencies: step 1)
+    - [ ] 2a. Write unit test for fetch utility (estimation: 15m; confidence: 85%; potential issues: mocking API; dependencies: step 2)
+    - [ ] 3. Add error handling to fetch utility (estimation: 15m; confidence: 90%; potential issues: custom error types; dependencies: step 2)
+    - [ ] 3a. Update unit test for error cases (estimation: 10m; confidence: 85%; dependencies: step 3)
+    - [ ] 4. Integrate into component (estimation: 45m; confidence: 80%; potential issues: state management conflicts; dependencies: step 3)
+    - [ ] 5. Add caching for fetch (optional enhancement) (estimation: 30m; confidence: 75%; potential issues: cache invalidation; dependencies: step 4)
+```
+
+2. **Implement Incrementally**: Work on one chunk at a time, verify it works (via tests or manual checks), then commit before moving to the next.
+3. **Commit Discipline**: Use small, focused commits with conventional commit messages (e.g., `feat: add user data interface`, `test: add fetch utility tests`).
+4. **Review Points**: Suggest a review after completing significant steps (e.g., MVP completion, tests passing) if collaboration is implied.
+
+## Testing Rules
+
+1. **TDD/BDD Enforcement**: Write tests before or alongside code (TDD by default; BDD if specified with tools like Cucumber).
+2. **Match Existing Test Patterns**: Use the project’s testing framework (e.g., Jest, Mocha, Vitest) and style (e.g., describe/it, expect assertions).
+3. **Test Types**:
+   - Unit tests for individual functions/modules.
+   - Integration tests for combined functionality if present in the codebase.
+   - Avoid UI/end-to-end tests unless explicitly requested.
+4. **Test Best Practices**:
+   - Write clear, independent tests with arrange-act-assert structure.
+   - Mock external dependencies (e.g., APIs, databases) consistently with existing mocks.
+   - Aim for 80%+ coverage of new/changed code.
+   - Follow existing test naming and organization (e.g., **tests**/file.test.ts).
+5. **Minimal Test Changes**: Update existing tests only to reflect functional changes; avoid refactoring test suites.
+
+## Tooling and Libraries
+
+1. **Use Existing Tools**: Stick to the project’s package manager (npm/yarn/pnpm) and dependencies unless directed otherwise.
+2. **TypeScript Best Practices**: Enable strict mode, use unknown over any, and align with existing tsconfig.json settings.
+3. **Linting/Formatting**: Follow ESLint/Prettier rules inferred from the codebase (e.g., semicolons, single quotes).
+4. **Build Tools**: Respect existing build setups (e.g., Webpack, Vite, Rollup) and avoid suggesting alternatives.
+5. **Internal Libraries**: Prioritize internal libraries or helpers over external ones if they meet the need.
+
+## Error Handling
+
+1. **Fix, Don’t Rewrite**: Propose targeted fixes that preserve structure rather than overhauling code.
+2. **Graceful Degradation**: Ensure code fails safely and logs errors appropriately (e.g., `console.error` or existing logging utils).
+3. **Ask for Clarification**: If unsure about patterns, intent, or requirements, ask the user instead of assuming.
+4. **Match Error Patterns**: Use existing error classes or conventions (e.g., throw new CustomError()).
+
+## Collaboration and Maintainability
+
+1. **Version Control**: Assume Git is used; suggest branch naming (e.g., feat/JIRA-1234-add-user-fetch) if relevant.
+2. **Code Reviews**: Format code and plans to be easily shareable with team members.
+3. **Backward Compatibility**: Avoid breaking changes unless explicitly requested; suggest deprecation strategies if needed.
+4. **Audit Trail**: Ensure commits and plans provide a clear history of changes.
+
+## Output Format
+
+1. **Code Snippets**: Use typescript or javascript blocks with explanations:
+
+```typescript
+// Define user data interface
+interface UserData {
+  id: number;
+  name: string;
+  email: string;
+}
+```
+
+2. **Development Plan**: Output plans in Markdown format as shown above.
+3. **Suggestions**: Present optional improvements (e.g., “Consider using axios for better error handling”) but wait for confirmation.
+
+## Restrictions
+
+1. **No Overriding**: Do not refactor or override large code sections unless explicitly requested.
+2. **No Unapproved Libraries**: Suggest new dependencies only with justification and await approval.
+
+## Technical stack
+- typescript (https://www.typescriptlang.org/)
+- package manager - pnpm (https://pnpm.io/)
+- monorepo - https://nx.dev/
+- frontend - NextJS (https://nextjs.org/)
+- backend - Express (https://expressjs.com/)
+- database - PostgreSQL (https://www.postgresql.org/)
+- testing - Jest (https://jestjs.io/)
+- docker - https://www.docker.com/
+- zod for validation (https://zod.dev/)
+- ORM - Prisma (https://www.prisma.io/)
+- UI library - Shadcn UI (https://ui.shadcn.com/)
+- API - GraphQL (https://github.com/apollographql/apollo-server and https://github.com/apollographql/apollo-client)
