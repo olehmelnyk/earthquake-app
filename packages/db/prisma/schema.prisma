@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Earthquake {
+  id        String   @id @default(cuid())
+  location  String
+  magnitude Float
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([location])
+  @@index([magnitude])
+  @@index([date])
+  @@index([location, magnitude])
+  @@index([date, magnitude])
+}
+
+// Note: The ImportHistory model is kept for tracking CSV imports
+// but it's not a core requirement from the specifications
+model ImportHistory {
+  id          String    @id @default(cuid())
+  filename    String
+  recordCount Int
+  status      String
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  error       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

@@ -103,22 +103,23 @@
     - **Investigation**: Assess which generators align with the project's needs and avoid overcomplicating the setup.
     - **Output**: Document findings in `prisma/generators.md`.
 
-- [ ] **5. CSV Data Handling**:
+- [x] **5. CSV Data Handling**:
   - The CSV file contains 5,304 entries, which is substantial but manageable in a single operation for a take-home assignment.
   - **Plan**: Develop a script to download the CSV from the provided URL (https://data.humdata.org/dataset/4881d82b-ba63-4515-b748-c364f3d05b42/resource/10ac8776-5141-494b-b3cd-bf7764b2f964/download/earthquakes1970-2014.csv) and generate a Prisma seed file.
   - **Fields to Map**: Based on the CSV schema example, extract `DateTime` (as date), `Latitude`/`Longitude` (combine into `location` string), and `Magnitude`. Ignore unused fields like `Depth`, `MagType`, etc., unless specified.
   - **Data Validation**: Implement validation for CSV data (e.g., check for malformed dates, missing fields)
   - **Output**: Generate a seed file in `prisma/seed.ts` with the formatted earthquake data.
+  - **Status**: Complete - Script created with data validation using Zod, successfully imports 5,304 earthquake records.
 
 - [ ] **6. Caching with Redis**:
   - **Evaluation**: Redis could cache frequent read operations (e.g., earthquake list queries), but for a CRUD app with 5,304 records, PostgreSQL's indexing and query optimization might suffice.
   - **Decision**: Likely overkill unless performance tests show significant bottlenecks. Document pros (e.g., faster reads) and cons (e.g., added complexity) in `docs/redis-usage.md`.
 
-- [x] **5. Instruction Files**:
+- [x] **7. Instruction Files**:
   - Create `.cursorrules` with AI instructions for best practices (e.g., TypeScript strict mode, ESLint rules, Prettier formatting).
   - Symlink it to `.windsurfrules` for consistency: `ln -s .cursorrules .windsurfrules`.
 
-- [ ] **7. Additional Considerations**:
+- [ ] **8. Additional Considerations**:
   - **Data Validation**: Validate CSV data and user inputs (e.g., magnitude as a positive number, valid date formats).
   - **Error Handling**: Return meaningful GraphQL errors (e.g., ValidationError, NotFoundError).
   - **Performance**: Plan for pagination and filtering in the earthquake list to handle the dataset efficiently.
@@ -173,10 +174,17 @@
   - Create base UI components in the `ui` package using Shadcn UI
   - **Output**: Shared packages for GraphQL, database, and UI components
 
-- [ ] **4. Docker Setup**:
+- [x] **4. Docker Setup**:
   - Create Docker Compose file for PostgreSQL database
   - Add Dockerfile for production build (optional for take-home)
   - Configure environment variables for local development
+  - **Status**: Complete - Docker setup with PostgreSQL configured and tested.
+
+- [x] **5. Database Schema Design**:
+  - Design Prisma schema for earthquake data and import history
+  - Add appropriate indexes for performance
+  - Configure migration scripts
+  - **Status**: Complete - Schema created with appropriate models and indexes.
 
 ### Definition of Done for Milestone 2:
 - NX workspace with Next.js app is properly configured
@@ -184,98 +192,95 @@
 - Basic project structure follows the package-first approach outlined in our documentation
 - Docker Compose can start the development environment
 
-## [ ] Milestone 3: Database and Backend Development
+## [x] Milestone 3: Database Setup and Data Import
 
-### Objective: Build the database schema, GraphQL API, and backend integration.
+### Objective: Set up the PostgreSQL database, create the necessary tables, and import earthquake data.
 
-- [ ] **1. Database Setup:**
-  - [ ] Initialize Prisma: `npx prisma init`.
-  - [ ] Connect to PostgreSQL in Docker via `DATABASE_URL` in `.env`.
-  - [ ] Define the `Earthquake` model in `prisma/schema.prisma`:
+- [x] **1. PostgreSQL Setup**:
+  - Docker configuration for PostgreSQL
+  - Configure database connection in `.env`
+  - Set up Prisma to connect to PostgreSQL
+  - **Status**: Complete - PostgreSQL database configured and running in Docker.
 
-```prisma
-  id        String   @id @default(uuid())
-  location  String
-  magnitude Float
-  date      DateTime
-```
-  - Add appropriate indexes for performance optimization:
-```prisma
-  @@index([location])
-  @@index([magnitude])
-  @@index([date])
-```
+- [x] **2. Prisma Schema Implementation**:
+  - Create models for `Earthquake` and `ImportHistory`
+  - Add proper indexes for efficient querying (on `date`, `magnitude`, and `location`)
+  - Generate Prisma client
+  - **Status**: Complete - Prisma schema created with all required models and indexes.
 
-- [ ] **2. Prisma Generators:**
-  - Add to `prisma/schema.prisma`:
-```prisma
-  generator ts {
-    provider = "prisma-generator-typescript-interfaces"
-  }
+- [x] **3. Migration Generation and Application**:
+  - Generate initial migration files
+  - Apply migrations to create database tables
+  - Verify table structure
+  - **Status**: Complete - Migration successfully applied, tables created with proper structure.
 
-  generator docs {
-    provider = "prisma-docs-generator"
-  }
+- [x] **4. Data Import Script**:
+  - Develop a script to download the earthquake CSV
+  - Parse and validate the data
+  - Import the data into the database
+  - Handle errors and malformed data gracefully
+  - **Status**: Complete - Script created and successfully imported 5,304 records.
 
-  generator zod {
-    provider = "prisma-zod-generator"
-  }
-```
-
-- [ ] **3. Database Migrations:**
-  - [ ] Create initial migration: `npx prisma migrate dev --name initial`
-  - [ ] Run database seed with import script: `npx prisma db seed`
-  - [ ] Verify data imports correctly
-  - [ ] Document migration process in README.md
-
-- [ ] **4. GraphQL Schema and Resolvers:**
-  - [ ] Define the schema (e.g., schema.graphql):
-```graphql
-type Earthquake {
-  id: ID!
-  location: String!
-  magnitude: Float!
-  date: String!
-}
-
-type Query {
-  earthquakes(offset: Int, limit: Int, location: String, minMagnitude: Float): [Earthquake!]!
-}
-
-type Mutation {
-  addEarthquake(location: String!, magnitude: Float!, date: String!): Earthquake!
-  updateEarthquake(id: ID!, location: String, magnitude: Float, date: String): Earthquake!
-  deleteEarthquake(id: ID!): Boolean!
-}
-```
-  - [ ] Implement resolvers with Prisma and Apollo Server, using DataLoader for N+1 mitigation.
-  - [ ] Set up Apollo Studio for interactive GraphQL documentation.
-
-- [ ] **5. Pagination and Filtering:**
-  - Add `offset` and `limit` for pagination, and filters like `location` and `minMagnitude`.
-  - Optimize with Prisma's `skip`, `take`, and `where` clauses.
-  - Consider cursor-based pagination for better performance.
-
-- [ ] **6. Error Handling and Validation:**
-  - [ ] Use Zod schemas (generated by `prisma-zod-generator`) for input validation.
-  - [ ] Return GraphQL errors with descriptive messages.
-  - [ ] Implement structured error logging.
-  - [ ] Create custom error types for different scenarios.
-
-- [ ] **7. Backend Testing:**
-  - [ ] Write unit tests for resolvers, models, and validation logic.
-  - [ ] Add integration tests for GraphQL API endpoints.
-  - [ ] Test CSV import script with sample data.
-  - [ ] Set up testing environment with in-memory database.
+- [x] **5. Data Verification**:
+  - Verify data integrity
+  - Test database queries
+  - Ensure all required fields are present
+  - **Status**: Complete - Data verified and accessible through Prisma client.
 
 ### Definition of Done for Milestone 3:
-- Database schema is implemented with Prisma
-- CSV data is successfully imported
-- GraphQL API is fully implemented with all required operations
-- Pagination and filtering are working properly
-- Comprehensive testing suite covers key backend functionality
+- PostgreSQL database is properly set up and accessible
+- Database schema is implemented with required tables and indexes
+- Earthquake data is successfully imported from CSV
+- Data is verified to be accurate and complete
+- Import history is properly tracked
 
-## [ ] Milestone 4: Frontend Development
+## [ ] Milestone 4: GraphQL API Implementation
+
+### Objective: Implement the GraphQL API to expose the earthquake data.
+
+- [ ] **1. GraphQL Schema Definition**:
+  - Define types for `Earthquake` and `ImportHistory`
+  - Create queries for fetching earthquakes with filtering and pagination
+  - Implement mutations for CRUD operations
+  - **Output**: Complete GraphQL schema with proper types, queries, and mutations
+
+- [ ] **2. Apollo Server Integration**:
+  - Set up Apollo Server in Next.js API routes
+  - Configure proper error handling and logging
+  - Implement GraphQL Playground for easy API testing
+  - **Output**: Working Apollo Server with interactive documentation
+
+- [ ] **3. Resolvers Implementation**:
+  - Create resolvers for all queries and mutations
+  - Implement efficient database access through Prisma
+  - Add pagination, sorting, and filtering capabilities
+  - **Output**: Complete set of resolvers for all GraphQL operations
+
+- [ ] **4. DataLoader Integration**:
+  - Implement DataLoader to address N+1 query problems
+  - Optimize batch loading for related data
+  - **Output**: Efficient data loading patterns for GraphQL resolvers
+
+- [ ] **5. Input Validation**:
+  - Use Zod schemas for validating GraphQL inputs
+  - Implement proper error handling for validation failures
+  - **Output**: Robust input validation for all GraphQL operations
+
+- [ ] **6. Testing**:
+  - Write unit tests for GraphQL resolvers
+  - Implement integration tests for the API
+  - Create test utilities for GraphQL testing
+  - **Output**: Comprehensive test suite for the GraphQL API
+
+### Definition of Done for Milestone 4:
+- GraphQL schema is fully implemented with all required types, queries, and mutations
+- Apollo Server is configured and accessible via Next.js API routes
+- All resolvers are implemented and connected to the Prisma database layer
+- Input validation is in place for all operations
+- Pagination, filtering, and sorting work properly for query operations
+- Test coverage is in place for all GraphQL functionality
+
+## [ ] Milestone 5: Frontend Development
 
 ### Objective: Build a user-friendly Next.js frontend application to interact with the GraphQL API.
 
@@ -321,7 +326,7 @@ type Mutation {
   - [ ] Implement server-side rendering strategy (SSR/SSG/ISR)
   - [ ] Add bundle analysis for frontend optimization
   - [ ] Configure caching headers for static assets
-  - [x] ~~Optimize image loading and rendering~~
+  - [ ] Optimize image loading and rendering
 
 - [ ] **9. Accessibility Compliance:**
   - [ ] Implement WCAG guidelines
@@ -329,14 +334,18 @@ type Mutation {
   - [ ] Add proper ARIA attributes
   - [ ] Test with screen readers
 
-### Definition of Done for Milestone 4:
-- UI is fully implemented with all required features
-- GraphQL operations are integrated with frontend
-- Error handling and user feedback are properly implemented
-- Performance optimizations are in place
-- Testing suite covers critical UI functionality
+### Definition of Done for Milestone 5:
+- UI components are fully implemented with Shadcn UI and TailwindCSS
+- Apollo Client is configured and connected to the GraphQL API
+- All required pages (list, add, edit) are implemented and functional
+- CRUD operations work correctly through the UI
+- Error handling and success notifications are in place
+- Responsive design works on different screen sizes
+- Accessibility requirements are met
+- Performance optimizations are implemented
+- Test coverage is in place for UI components and pages
 
-## [ ] Milestone 5: Documentation and Final Polish
+## [ ] Milestone 6: Documentation and Final Polish
 
 ### Objective: Ensure the application is well-documented, polished, and ready for submission.
 
@@ -374,7 +383,7 @@ type Mutation {
   - [ ] Ensure Docker configuration works properly
   - [ ] Create a final release tag in the repository
 
-### Definition of Done for Milestone 5:
+### Definition of Done for Milestone 6:
 - Documentation is comprehensive and clear
 - Code is clean, consistent, and follows best practices
 - All features meet requirements and work as expected
