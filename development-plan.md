@@ -87,7 +87,7 @@
     - Document trade-offs between PostgreSQL vs MongoDB for this specific use case
 
 - [ ] **3. GraphQL Considerations**:
-  - **N+1 Query Problem**: In GraphQL, nested resolvers can lead to multiple database queries. Investigate solutions like DataLoader to batch requests or optimize queries with joins via Prisma.
+  - **N+1 Query Problem**: In GraphQL, nested resolvers can lead to multiple database queries. For this take-home assignment, we'll document potential solutions (DataLoader, Prisma's include) in `docs/graphql-performance-considerations.md` but skip implementation due to the limited dataset size (~5000 records).
   - **Implementation Approach**: Compare code-first vs schema-first approaches and document decision
   - **GraphQL Codegen**: Evaluate using GraphQL Codegen for automatic type generation from schema
   - **Manual Implementation**: As documented in `docs/apollo-server-prisma-integration.md`, we've decided to implement Apollo Server resolvers manually rather than using a code generator, as this approach offers better control, simplicity, and learning demonstration for this take-home assignment.
