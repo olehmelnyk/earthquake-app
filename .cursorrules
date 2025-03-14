@@ -149,6 +149,56 @@ In a real-world project, the following would be considered:
 - Support screen readers
 - Test with accessibility tools
 
+## Web Performance Requirements
+
+- **Lighthouse Optimization**: Generated code must follow best practices to achieve high Lighthouse scores:
+  - **Performance**: Optimize for FCP, LCP, TTI, TBT, and CLS metrics
+  - **Accessibility**: Ensure ARIA attributes, semantic HTML, and keyboard navigation
+  - **Best Practices**: Follow security standards and modern web development patterns
+  - **SEO**: Implement proper metadata, structured data, and semantic markup
+
+- **Core Web Vitals Compliance**:
+  - **LCP (Largest Contentful Paint)**: Keep under 2.5s by optimizing image loading, minimizing CSS, and prioritizing critical rendering paths
+  - **FID (First Input Delay)**: Keep under 100ms by minimizing long JavaScript tasks and deferring non-critical JS
+  - **CLS (Cumulative Layout Shift)**: Keep under 0.1 by setting explicit dimensions for images, embeds, and dynamically loaded content
+  - **INP (Interaction to Next Paint)**: Keep under 200ms by optimizing event handlers and minimizing main thread blocking
+
+- **Image Optimization**:
+  - Use Next.js Image component for automatic optimization
+  - Implement responsive images with srcset and size attributes
+  - Use modern formats (WebP, AVIF) with proper fallbacks
+  - Set explicit width and height to prevent layout shifts
+
+- **JavaScript Efficiency**:
+  - Use code splitting and dynamic imports for large components
+  - Implement proper React memo, useMemo, and useCallback for expensive operations
+  - Ensure efficient re-renders by proper state management
+  - Avoid prop drilling through context or composition
+
+- **CSS and Styling**:
+  - Use CSS-in-JS solutions that support critical CSS extraction
+  - Minimize unused CSS with proper purging (Tailwind's JIT mode)
+  - Prioritize critical CSS loading for above-the-fold content
+  - Avoid layout thrashing by batching DOM reads and writes
+
+- **Server-Side Rendering & Static Generation**:
+  - Prioritize static generation for content that doesn't change frequently
+  - Use incremental static regeneration for semi-dynamic content
+  - Implement proper caching strategies at CDN and application levels
+  - Use server components where appropriate for reduced JavaScript payload
+
+- **Third-Party Scripts Management**:
+  - Load non-critical third-party scripts with defer or async attributes
+  - Use resource hints (preconnect, prefetch, preload) for critical resources
+  - Consider self-hosting critical third-party resources when possible
+  - Implement proper CSP policies without sacrificing functionality
+
+- **Testing and Monitoring**:
+  - Regularly test with Lighthouse CI in the development workflow
+  - Implement real user monitoring (RUM) for production performance insights
+  - Set performance budgets and enforce them in the build process
+  - Test on low-end devices and throttled connections
+
 ## Git Workflow (Simplified for Take-Home Assignment)
 
 - Create a well-organized Git repository
