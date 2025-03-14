@@ -62,12 +62,24 @@ In a real-world project, the following would be considered:
 
 ## Code Structure and Architecture
 
-- Backend code should be organized in `/apps/backend` or `/packages/backend`
-- Frontend code should be organized in `/apps/frontend` or `/packages/frontend`
-- Shared types and utilities go in `/packages/shared`
-- Use GraphQL for all API operations
-- Database models should match GraphQL schema structure
-- Follow a clear folder structure for separation of concerns
+- **Package-First Approach**: Prioritize creating shared packages over app-specific code
+- **GraphQL Schema & Resolvers**: Place in `/packages/graphql` for reuse between Next.js API and Express
+- **Database Access Layer**: Place in `/packages/db` including Prisma schema and client exports
+- **UI Component Library**: Place reusable UI components in `/packages/ui` for potential reuse across apps
+- **Shared Types**: Place in `/packages/types` for use across both frontend and backend
+- **Shared Utilities**: Place in `/packages/utils` for common helper functions and business logic
+- **Apps as Thin Shells**: Keep apps (Next.js, Express) as thin shells that primarily compose packages
+- **Proper Imports**: Use workspace imports (e.g., `@earthquake-app/graphql`) rather than relative paths
+- **Independent Testing**: Each package should have its own unit tests independent of apps
+
+## UI Component Organization
+
+- **Component Library**: Implement Shadcn UI components in `/packages/ui` for consistent styling and behavior
+- **Component Structure**: Each UI component should include the component itself, tests, and stories
+- **Component Exports**: Use a barrel export pattern to simplify imports
+- **Composition Over Inheritance**: Build complex components by composing simpler ones
+- **State Management**: Keep UI components stateless where possible, with state managed by the parent app
+- **Design System**: Enforce consistent spacing, colors, and typography via shared tokens
 
 ## Naming Conventions
 

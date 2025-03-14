@@ -59,21 +59,24 @@
 -----
 
 ## Additional Notes
-- Redis: Skip unless performance issues arise, as PostgreSQL should handle this scale.
-- README: Include setup instructions (e.g., `pnpm install`, `docker-compose up`, `npx prisma migrate dev`, `pnpm run dev`), Node.js version (e.g., 22.x), and architecture decisions.
-- Best Practices: Use TypeScript strict mode, linting, and consistent formatting.
-- Git Workflow: Consider implementing Conventional Commits for better changelog generation.
-- Developer Experience: Add comprehensive scripts in package.json for common tasks.
+  - **Redis**: Skip unless performance issues arise, as PostgreSQL should handle this scale.
+- **README**: Include setup instructions (e.g., `pnpm install`, `docker-compose up`, `npx prisma migrate dev`, `pnpm run dev`), Node.js version (e.g., 22.x), and architecture decisions.
+- **Best Practices**: Use TypeScript strict mode, linting, and consistent formatting.
+- **Git Workflow**: Consider implementing Conventional Commits for better changelog generation.
+- **Developer Experience**: Add comprehensive scripts in package.json for common tasks.
 
 ## [ ]  Milestone 1: Requirements Gathering, Investigation, and Development Planning
 
 ### Objective: Clarify requirements, investigate architectural options, and plan the development process.
 
-- [ ] **1. Backend Architecture Decision**:
+- [x] **1. Backend Architecture Decision**:
 
   - The task specifies using Express with Apollo Server for the backend, but since Next.js is required for the frontend, explore integrating the GraphQL API into Next.js using its API routes. This avoids managing two separate servers, simplifying deployment and development.
   - **Investigation**: Research the feasibility, pros (e.g., unified codebase, easier local development), and cons (e.g., potential scalability limitations for complex backends) of hosting the backend within Next.js.
-  - **Output**: Document findings in `architecture/use-nextjs-for-backend.md`.
+  - **Decision**: We will use Next.js API routes for the GraphQL backend as documented in `docs/use-nextjs-for-backend.md`. This simplifies development and deployment while being sufficient for the assignment's requirements.
+  - **Migration Path**: While using Next.js API routes is optimal for this take-home assignment, the code should be structured to allow easy migration to a standalone Express server if needed in the future. GraphQL resolvers and schema will be isolated from the API route implementation to ensure portability.
+  - **Action Item**: Create a brief migration guide in `docs/nextjs-to-express-migration.md` outlining how the codebase could be adapted for a standalone Express backend if needed for production scaling.
+  - **Output**: Document findings in `docs/use-nextjs-for-backend.md`.
 
 - [x] **2. Database Selection**:
 
@@ -109,7 +112,7 @@
 
 - [ ] **6. Caching with Redis**:
   - **Evaluation**: Redis could cache frequent read operations (e.g., earthquake list queries), but for a CRUD app with 5,304 records, PostgreSQL's indexing and query optimization might suffice.
-  - **Decision**: Likely overkill unless performance tests show significant bottlenecks. Document pros (e.g., faster reads) and cons (e.g., added complexity) in `architecture/redis-usage.md`.
+  - **Decision**: Likely overkill unless performance tests show significant bottlenecks. Document pros (e.g., faster reads) and cons (e.g., added complexity) in `docs/redis-usage.md`.
 
 - [x] **5. Instruction Files**:
   - Create `.cursorrules` with AI instructions for best practices (e.g., TypeScript strict mode, ESLint rules, Prettier formatting).
@@ -124,7 +127,7 @@
     - Set up error monitoring with Sentry or similar for production
     - Add health check endpoints
   - **Authentication Framework**: Document potential future auth implementation approach
-  - **Output**: Document findings in `architecture/additional-considerations.md`.
+  - **Output**: Document findings in `docs/additional-considerations.md`.
 
 ### Definition of Done for Milestone 1:
 - Architecture decisions are documented
@@ -132,59 +135,51 @@
 - CSV import strategy is planned
 - Key technical considerations are addressed
 
-## [ ] Milestone 2: Project Initialization
+## [ ] Milestone 2: Project Scaffolding
 
-### Objective: Set up the initial project structure, tools, environment, including backend, frontend, and database configuration.
+### Objective: Set up the project structure and necessary infrastructure.
 
-- [ ] **1. Monorepo Setup:**
-  - [ ] Use NX to create a monorepo, managing both frontend (Next.js) and backend (Express, if separate).
-  - Commands:
-    - [ ] `npx create-nx-workspace@latest earthquake-app --preset=apps`
-    - [ ] Add Next.js: `nx g @nx/next:app frontend`
-    - [ ] Add Express (if separate): `nx g @nx/express:init backend`
-  - Use `pnpm` as the package manager for efficiency.
-  - [ ] Add shared package for common types: `nx g @nx/js:lib shared`
+- [ ] **1. Monorepo Setup**:
+  - Configure NX workspace with pnpm as package manager
+  - Configure ESLint/Prettier for consistent formatting
+  - Set up Git hooks for pre-commit linting and formatting
 
-- [ ] **2. Version Control:**
-  - [ ] Initialize a public GitHub repository for the project.
-  - [ ] Set up Git hooks for pre-commit and pre-push.
-  - [ ] Configure Git to use the repository.
-  - [ ] Create a .gitignore file for node_modules, build files, etc.
-  - [ ] Make an initial commit with the basic project structure.
+- [ ] **2. Next.js Frontend Setup**:
+  ```bash
+  # From the monorepo root, create a Next.js app with proper configuration
+  pnpm nx g @nx/next:application frontend \
+    --directory=apps/frontend \
+    --tags="scope:frontend,type:app" \
+    --style=css \
+    --appDir \
+    --e2eTestRunner=playwright
+  ```
+  - Configure Tailwind CSS for styling
+  - Set up Shadcn UI for component library
+  - Add Apollo Client for GraphQL integration
+  - Configure proper project structure in line with NX best practices
 
-- [ ] **3. Docker Configuration:**
-  - Set up PostgreSQL in Docker:
-    - [ ] `Dockerfile`: Define a basic Postgres image with custom configs (if needed).
-    - [ ] `docker-compose.yml`: Include Postgres service with persistent volume and environment variables (e.g., `POSTGRES_USER`, `POSTGRES_PASSWORD`).
-  - [ ] Ensure the database is accessible from the app.
-  - [ ] Add comprehensive documentation for Docker setup in README.md.
+- [ ] **3. Shared Packages Setup**:
+  ```bash
+  # Create shared packages for reusable code
+  pnpm nx g @nx/js:library graphql --directory=packages/graphql --tags="scope:shared,type:lib"
+  pnpm nx g @nx/js:library db --directory=packages/db --tags="scope:shared,type:lib"
+  pnpm nx g @nx/react:library ui --directory=packages/ui --tags="scope:shared,type:lib" --style=css
+  ```
+  - Configure Prisma in the `db` package
+  - Set up GraphQL schema and resolvers in the `graphql` package
+  - Create base UI components in the `ui` package using Shadcn UI
 
-- [ ] **4. Development Environment:**
-  - [ ] Add `.nvmrc` file to ensure consistent Node.js version.
-  - [ ] Create VSCode settings and extensions recommendations.
-  - [ ] Set up ESLint and Prettier configuration.
-  - [ ] Add comprehensive "Getting Started" guide with troubleshooting section.
-
-- [x] **5. Instruction Files:**
-  - Create `.cursorrules` with AI instructions for best practices (e.g., TypeScript strict mode, ESLint rules, Prettier formatting).
-  - Symlink it to `.windsurfrules` for consistency: `ln -s .cursorrules .windsurfrules`.
-
-- [ ] **6. CSV Data Import Script**:
-  - [ ] Write a script (e.g., `scripts/generate-seed.ts`) to:
-    - Download the CSV using `fetch`.
-    - Parse it with `csv-parse`.
-    - Generate a Prisma seed file (`prisma/seed.ts`) with the earthquake data.
-    - Configure the seed command in `package.json`: `"prisma": { "seed": "tsx prisma/seed.ts" }`.
-  - [ ] Add error handling for malformed data with detailed logging.
-  - [ ] Include validation to ensure data integrity.
-  - [ ] Design the seed to only run in development/test environments, not production.
+- [ ] **4. Docker Setup**:
+  - Create Docker Compose file for PostgreSQL database
+  - Add Dockerfile for production build (optional for take-home)
+  - Configure environment variables for local development
 
 ### Definition of Done for Milestone 2:
-- Monorepo structure is set up with appropriate packages
-- Repository is initialized with proper configuration
-- Docker environment is working and documented
-- Development environment is configured for productive work
-- CSV import script is prepared for database seeding
+- NX workspace with Next.js app is properly configured
+- Database connection is established with Prisma
+- Basic project structure follows the package-first approach outlined in our documentation
+- Docker Compose can start the development environment
 
 ## [ ] Milestone 3: Database and Backend Development
 
