@@ -254,7 +254,7 @@
 - Data can be queried and modified through the GraphQL API
 - Error handling and validation are in place
 
-## [ ] Milestone 4: Apollo Client Integration in Frontend
+## [x] Milestone 4: Apollo Client Integration in Frontend
 
 ### Objective: Set up Apollo Client in the Next.js application to connect to the GraphQL API.
 
@@ -270,16 +270,16 @@
   - [x] Set up fragment reuse for common data patterns
   - **Output**: GraphQL operation definitions for the frontend
 
-- [ ] **3. Custom React Hooks**:
-  - [ ] Create custom hooks for data fetching (useEarthquakes, useEarthquake)
-  - [ ] Implement hooks for mutations (useCreateEarthquake, useUpdateEarthquake, useDeleteEarthquake)
-  - [ ] Add proper loading, error, and success states
+- [x] **3. Custom React Hooks**:
+  - [x] Create custom hooks for data fetching (useEarthquakes, useEarthquake)
+  - [x] Implement hooks for mutations (useCreateEarthquake, useUpdateEarthquake, useDeleteEarthquake)
+  - [x] Add proper loading, error, and success states
   - **Output**: Reusable React hooks for GraphQL operations
 
-- [ ] **4. State Management**:
-  - [ ] Implement Apollo cache updates after mutations
-  - [ ] Set up optimistic UI updates for better user experience
-  - [ ] Create error handling and retry mechanisms
+- [x] **4. State Management**:
+  - [x] Implement Apollo cache updates after mutations
+  - [x] Set up optimistic UI updates for better user experience
+  - [x] Create error handling and retry mechanisms
   - **Output**: Robust state management for GraphQL operations
 
 ### Definition of Done for Milestone 4:
