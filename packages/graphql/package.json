@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@apollo/server": "^4.10.0",
-    "@earthquake-nx/db": "*",
     "@prisma/client": "^6.5.0",
     "tslib": "^2.3.0"
   },
