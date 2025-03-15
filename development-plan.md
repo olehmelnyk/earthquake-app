@@ -31,6 +31,7 @@
 ### GraphQL N+1:
 - **Issue:** Unoptimized resolvers could slow down list queries.
 - **Solution:** Use DataLoader or Prisma joins.
+- **Note for Take-Home Assignment:** We acknowledge this potential problem but won't implement DataLoader in this assignment to focus on core requirements. In a production environment, this would be addressed to ensure optimal performance.
 
 ### Database Performance:
 - **Issue:** Unindexed queries on 5,304 records could be slow.
@@ -65,7 +66,7 @@
 - **Git Workflow**: Consider implementing Conventional Commits for better changelog generation.
 - **Developer Experience**: Add comprehensive scripts in package.json for common tasks.
 
-## [ ]  Milestone 1: Requirements Gathering, Investigation, and Development Planning
+## [x]  Milestone 1: Requirements Gathering, Investigation, and Development Planning
 
 ### Objective: Clarify requirements, investigate architectural options, and plan the development process.
 
@@ -86,7 +87,7 @@
     - Consider SQLite for local development to simplify setup
     - Document trade-offs between PostgreSQL vs MongoDB for this specific use case
 
-- [ ] **3. GraphQL Considerations**:
+- [x] **3. GraphQL Considerations**:
   - **N+1 Query Problem**: In GraphQL, nested resolvers can lead to multiple database queries. For this take-home assignment, we'll document potential solutions (DataLoader, Prisma's include) in `docs/graphql-performance-considerations.md` but skip implementation due to the limited dataset size (~5000 records).
   - **Implementation Approach**: Compare code-first vs schema-first approaches and document decision
   - **GraphQL Codegen**: Evaluate using GraphQL Codegen for automatic type generation from schema
@@ -111,7 +112,7 @@
   - **Output**: Generate a seed file in `prisma/seed.ts` with the formatted earthquake data.
   - **Status**: Complete - Script created with data validation using Zod, successfully imports 5,304 earthquake records.
 
-- [ ] **6. Caching with Redis**:
+- [x] **6. Caching with Redis**:
   - **Evaluation**: Redis could cache frequent read operations (e.g., earthquake list queries), but for a CRUD app with 5,304 records, PostgreSQL's indexing and query optimization might suffice.
   - **Decision**: Likely overkill unless performance tests show significant bottlenecks. Document pros (e.g., faster reads) and cons (e.g., added complexity) in `docs/redis-usage.md`.
 
@@ -124,9 +125,9 @@
   - **Error Handling**: Return meaningful GraphQL errors (e.g., ValidationError, NotFoundError).
   - **Performance**: Plan for pagination and filtering in the earthquake list to handle the dataset efficiently.
   - **Monitoring & Logging**:
-    - Plan for structured logging with Winston or Pino
-    - Set up error monitoring with Sentry or similar for production
-    - Add health check endpoints
+    - [ ] Plan for structured logging with Winston or Pino
+    - [ ] Set up error monitoring with Sentry or similar for production
+    - [ ] Add health check endpoints
   - **Authentication Framework**: Document potential future auth implementation approach
   - **Output**: Document findings in `docs/additional-considerations.md`.
 
@@ -192,199 +193,244 @@
 - Basic project structure follows the package-first approach outlined in our documentation
 - Docker Compose can start the development environment
 
-## [x] Milestone 3: Database Setup and Data Import
+## [x] Milestone 3: Database and GraphQL API Setup
 
-### Objective: Set up the PostgreSQL database, create the necessary tables, and import earthquake data.
+### Objective: Implement the database schema and GraphQL API for the project.
 
-- [x] **1. PostgreSQL Setup**:
-  - Docker configuration for PostgreSQL
-  - Configure database connection in `.env`
-  - Set up Prisma to connect to PostgreSQL
-  - **Status**: Complete - PostgreSQL database configured and running in Docker.
+- [x] **1. Prisma Schema Definition**:
+  - [x] Define Prisma schema for earthquake data with:
+    - `id`: String (UUID)
+    - `location`: String (formatted as "City, Country" or coordinates)
+    - `magnitude`: Float
+    - `date`: DateTime
+    - Additional metadata fields (e.g., createdAt, updatedAt)
+  - [x] Configure relations for any associated data (e.g., importHistory)
+  - [x] Set up necessary indexes for performance
+  - [x] Add comprehensive documentation for the schema
+  - **Output**: Complete Prisma schema in `packages/db/prisma/schema.prisma`
 
-- [x] **2. Prisma Schema Implementation**:
-  - Create models for `Earthquake` and `ImportHistory`
-  - Add proper indexes for efficient querying (on `date`, `magnitude`, and `location`)
-  - Generate Prisma client
-  - **Status**: Complete - Prisma schema created with all required models and indexes.
+- [x] **2. Database Migrations**:
+  - [x] Generate and apply initial migration
+  - [x] Implement seed script to populate database with CSV data
+  - [x] Create script for resetting development database if needed
+  - **Output**: Database migration files and seed script
 
-- [x] **3. Migration Generation and Application**:
-  - Generate initial migration files
-  - Apply migrations to create database tables
-  - Verify table structure
-  - **Status**: Complete - Migration successfully applied, tables created with proper structure.
+- [x] **3. GraphQL Schema Definition**:
+  - [x] Define GraphQL types for:
+    - Earthquake
+    - EarthquakeFilterInput (for filtering by location, magnitude range, date range)
+    - PaginationInput (for paginated lists)
+    - OrderByInput (for sorting)
+  - [x] Define queries for:
+    - earthquake(id: ID!): Earthquake
+    - earthquakes(filter: EarthquakeFilterInput, pagination: PaginationInput, orderBy: OrderByInput): EarthquakeConnection
+    - filterOptions: FilterOptions (to get unique locations, magnitude range, etc.)
+  - [x] Define mutations for:
+    - createEarthquake(input: CreateEarthquakeInput!): Earthquake
+    - updateEarthquake(id: ID!, input: UpdateEarthquakeInput!): Earthquake
+    - deleteEarthquake(id: ID!): Boolean
+    - importEarthquakes(url: String!): ImportResult
+  - **Output**: GraphQL schema in `packages/graphql/schema.graphql`
 
-- [x] **4. Data Import Script**:
-  - Develop a script to download the earthquake CSV
-  - Parse and validate the data
-  - Import the data into the database
-  - Handle errors and malformed data gracefully
-  - **Status**: Complete - Script created and successfully imported 5,304 records.
-
-- [x] **5. Data Verification**:
-  - Verify data integrity
-  - Test database queries
-  - Ensure all required fields are present
-  - **Status**: Complete - Data verified and accessible through Prisma client.
-
-### Definition of Done for Milestone 3:
-- PostgreSQL database is properly set up and accessible
-- Database schema is implemented with required tables and indexes
-- Earthquake data is successfully imported from CSV
-- Data is verified to be accurate and complete
-- Import history is properly tracked
-
-## [ ] Milestone 4: GraphQL API Implementation
-
-### Objective: Implement the GraphQL API to expose the earthquake data.
-
-- [ ] **1. GraphQL Schema Definition**:
-  - Define types for `Earthquake` and `ImportHistory`
-  - Create queries for fetching earthquakes with filtering and pagination
-  - Implement mutations for CRUD operations
-  - **Output**: Complete GraphQL schema with proper types, queries, and mutations
-
-- [ ] **2. Apollo Server Integration**:
-  - Set up Apollo Server in Next.js API routes
-  - Configure proper error handling and logging
-  - Implement GraphQL Playground for easy API testing
-  - **Output**: Working Apollo Server with interactive documentation
-
-- [ ] **3. Resolvers Implementation**:
-  - Create resolvers for all queries and mutations
-  - Implement efficient database access through Prisma
-  - Add pagination, sorting, and filtering capabilities
-  - **Output**: Complete set of resolvers for all GraphQL operations
+- [x] **4. GraphQL Resolvers Implementation**:
+  - [x] Implement query resolvers
+  - [x] Implement mutation resolvers
+  - [x] Add error handling and validation
+  - [x] Integrate with Prisma client
+  - **Output**: GraphQL resolvers in `packages/graphql/src/resolvers`
 
 - [ ] **4. DataLoader Integration**:
-  - Implement DataLoader to address N+1 query problems
-  - Optimize batch loading for related data
-  - **Output**: Efficient data loading patterns for GraphQL resolvers
+  - **Note for Take-Home Assignment:** While DataLoader would be important in a production application, we're intentionally skipping this implementation for the take-home assignment to focus on core requirements. We acknowledge the N+1 problem but consider it acceptable for the demo purposes with the limited dataset size.
+  - In a real-world implementation we would:
+    - Implement DataLoader to address N+1 query problems
+    - Optimize batch loading for related data
+    - Add caching strategies for frequently accessed data
+  - **Output**: This task is intentionally marked as not implemented in the take-home assignment.
 
-- [ ] **5. Input Validation**:
-  - Use Zod schemas for validating GraphQL inputs
-  - Implement proper error handling for validation failures
-  - **Output**: Robust input validation for all GraphQL operations
+### Definition of Done for Milestone 3:
+- Database schema is properly designed and implemented
+- GraphQL schema reflects all required operations
+- Resolvers correctly implement all queries and mutations
+- Data can be queried and modified through the GraphQL API
+- Error handling and validation are in place
 
-- [ ] **6. Testing**:
-  - Write unit tests for GraphQL resolvers
-  - Implement integration tests for the API
-  - Create test utilities for GraphQL testing
-  - **Output**: Comprehensive test suite for the GraphQL API
+## [ ] Milestone 4: Apollo Client Integration in Frontend
+
+### Objective: Set up Apollo Client in the Next.js application to connect to the GraphQL API.
+
+- [x] **1. Apollo Client Setup**:
+  - [x] Install and configure Apollo Client in the Next.js app
+  - [x] Set up proper caching strategies
+  - [x] Create GraphQL code generation configuration
+  - **Output**: Working Apollo Client configuration in the frontend
+
+- [x] **2. GraphQL Operations Definition**:
+  - [x] Define query operations for fetching earthquake data
+  - [x] Create mutation operations for CRUD functionality
+  - [x] Set up fragment reuse for common data patterns
+  - **Output**: GraphQL operation definitions for the frontend
+
+- [ ] **3. Custom React Hooks**:
+  - [ ] Create custom hooks for data fetching (useEarthquakes, useEarthquake)
+  - [ ] Implement hooks for mutations (useCreateEarthquake, useUpdateEarthquake, useDeleteEarthquake)
+  - [ ] Add proper loading, error, and success states
+  - **Output**: Reusable React hooks for GraphQL operations
+
+- [ ] **4. State Management**:
+  - [ ] Implement Apollo cache updates after mutations
+  - [ ] Set up optimistic UI updates for better user experience
+  - [ ] Create error handling and retry mechanisms
+  - **Output**: Robust state management for GraphQL operations
 
 ### Definition of Done for Milestone 4:
-- GraphQL schema is fully implemented with all required types, queries, and mutations
-- Apollo Server is configured and accessible via Next.js API routes
-- All resolvers are implemented and connected to the Prisma database layer
-- Input validation is in place for all operations
-- Pagination, filtering, and sorting work properly for query operations
-- Test coverage is in place for all GraphQL functionality
+- Apollo Client is properly configured in the Next.js app
+- GraphQL operations are defined for all required functionality
+- Custom hooks provide an easy-to-use interface for components
+- State management handles loading, errors, and cache updates
 
-## [ ] Milestone 5: Frontend Development
+## [ ] Milestone 5: UI Component Development
 
-### Objective: Build a user-friendly Next.js frontend application to interact with the GraphQL API.
+### Objective: Build reusable UI components for the earthquake management application.
 
-- [ ] **1. UI Library Setup**:
-  - [ ] Use `shadcn/ui` for components: `pnpm dlx shadcn@latest init`.
-  - [ ] Install necessary components (e.g., `pnpm dlx shadcn@latest add table button form`).
-  - [ ] Add global styles and theme configuration.
-  - [ ] Set up TailwindCSS for custom styling.
+- [ ] **1. Design System Configuration**:
+  - [ ] Set up Shadcn UI components
+  - [ ] Configure global styles and themes
+  - [ ] Implement responsive design utilities
+  - **Output**: Consistent design system for the application
 
-- [ ] **2. Apollo Client Setup**:
-  - [ ] Install `@apollo/client` and configure it to connect to the GraphQL API (Next.js API route or separate backend).
-  - [ ] Set up Apollo Client Provider wrapper.
-  - [ ] Compare with React Query and SWR alternatives, documenting decision.
+- [ ] **2. Data Display Components**:
+  - [ ] Create earthquake table component
+  - [ ] Implement earthquake card component for alternative views
+  - [ ] Build detail view component for showing earthquake information
+  - **Output**: Components for displaying earthquake data
 
-- [ ] **3. Queries and Mutations**:
-  - [ ] Define GraphQL operations with Zod validation:
-    - `useQuery` for fetching earthquakes.
-    - `useMutation` for add/update/delete.
-  - [ ] Implement proper loading and error states.
+- [ ] **3. Form Components**:
+  - [ ] Implement filter form with proper validation
+  - [ ] Create earthquake add/edit form
+  - [ ] Build form components for search and other interactions
+  - **Output**: Form components for user interactions
 
-- [ ] **4. Pages and Components**:
-  - [ ] Use `shadcn/ui` components for a clean UI.
-  - [ ] List Page (`/earthquakes`): Display a paginated table with sorting (e.g., by magnitude, date) and inline edit/delete buttons.
-  - [ ] Add Page (`/earthquakes/new`): Form to create a new earthquake.
-  - [ ] Edit Page (`/earthquakes/[id]`): Form to update an existing earthquake.
-  - [ ] Implement responsive design for mobile and desktop.
-
-- [ ] **5. Error Handling and Notifications**:
-  - [ ] Show toast notifications (e.g., via `shadcn/ui`) for success/errors.
-  - [ ] Handle loading states and display appropriate messages.
-  - [ ] Implement error boundaries for graceful failure handling.
-
-- [ ] **6. State Management**:
-  - [ ] Apollo Client's cache should suffice, but evaluate React Query integration if additional caching benefits are needed.
-  - [ ] Document state management decisions.
-
-- [ ] **7. Frontend Testing**:
-  - [ ] Write Jest tests for components and pages.
-  - [ ] Add React Testing Library tests for component behavior.
-  - [ ] Implement accessibility testing with axe-core.
-
-- [ ] **8. Performance Optimization:**
-  - [ ] Implement server-side rendering strategy (SSR/SSG/ISR)
-  - [ ] Add bundle analysis for frontend optimization
-  - [ ] Configure caching headers for static assets
-  - [ ] Optimize image loading and rendering
-
-- [ ] **9. Accessibility Compliance:**
-  - [ ] Implement WCAG guidelines
-  - [ ] Ensure keyboard navigation support
-  - [ ] Add proper ARIA attributes
-  - [ ] Test with screen readers
+- [ ] **4. Feedback Components**:
+  - [ ] Create loading indicators and skeletons
+  - [ ] Implement error messages and alerts
+  - [ ] Add success notifications
+  - **Output**: Components for user feedback
 
 ### Definition of Done for Milestone 5:
-- UI components are fully implemented with Shadcn UI and TailwindCSS
-- Apollo Client is configured and connected to the GraphQL API
-- All required pages (list, add, edit) are implemented and functional
-- CRUD operations work correctly through the UI
-- Error handling and success notifications are in place
-- Responsive design works on different screen sizes
-- Accessibility requirements are met
-- Performance optimizations are implemented
-- Test coverage is in place for UI components and pages
+- Design system is consistently applied across the application
+- Data display components render earthquake information effectively
+- Form components handle user input with proper validation
+- Feedback components provide clear indications of system state
 
-## [ ] Milestone 6: Documentation and Final Polish
+## [ ] Milestone 6: Frontend Implementation
 
-### Objective: Ensure the application is well-documented, polished, and ready for submission.
+### Objective: Develop the user interface for the earthquake management application.
 
-- [ ] **1. README and Setup Instructions:**
-  - [ ] Create comprehensive README.md with:
-    - Project overview and features
-    - Setup and installation instructions
-    - Database migration and seed instructions
-    - Development workflow
-    - Testing information
-    - API documentation links
-    - Node.js version requirements
-  - [ ] Add troubleshooting section for common issues
+- [ ] **1. Layout and Navigation**:
+  - [ ] Implement responsive layout with Shadcn UI
+  - [ ] Create navigation sidebar/header
+  - [ ] Add dark/light theme toggle
+  - **Output**: Base layout components in `apps/frontend/components/layout`
 
-- [ ] **2. API Documentation:**
-  - [ ] Set up Apollo Studio Explorer configuration
-  - [ ] Generate schema documentation from GraphQL types
-  - [ ] Document queries, mutations, and examples
+- [ ] **2. Earthquake List View**:
+  - [ ] Create basic table component with columns for id, location, magnitude, date
+  - [ ] Implement sorting by clicking column headers
+  - [ ] Add pagination controls
+  - [ ] Style with Shadcn UI and Tailwind
+  - **Output**: Earthquake list component in `apps/frontend/components/earthquakes`
 
-- [ ] **3. Architecture Documentation:**
-  - [ ] Create architecture diagram using Mermaid or PlantUML
-  - [ ] Document system components and interactions
-  - [ ] Include decision documentation for key architectural choices
+- [ ] **3. Filtering Interface**:
+  - [ ] Create filter panel with basic inputs
+  - [ ] Implement proper UI components with Shadcn UI:
+    - [ ] Location dropdown/autocomplete
+    - [ ] Magnitude range slider
+    - [ ] Date range picker
+  - [x] Implement filter state management
+  - [x] Connect filters to GraphQL queries
+  - **Output**: Filter components in `apps/frontend/components/filters`
 
-- [ ] **4. Code Quality Assurance:**
-  - [ ] Run final linting and type checking
-  - [ ] Fix any remaining warnings or errors
-  - [ ] Conduct code review for best practices compliance
-  - [ ] Ensure consistent naming conventions
+- [ ] **4. Earthquake Detail View**:
+  - [ ] Create detail page or modal for viewing earthquake information
+  - [ ] Implement edit functionality for earthquake data
+  - [ ] Add delete confirmation dialog
+  - **Output**: Detail view component for earthquake data
 
-- [ ] **5. Finalization:**
-  - [ ] Clean up development artifacts and unused code
-  - [ ] Verify all features work as expected
-  - [ ] Check for performance issues with larger datasets
-  - [ ] Ensure Docker configuration works properly
-  - [ ] Create a final release tag in the repository
+- [ ] **5. Dashboard and Analytics**:
+  - [ ] Create simple dashboard with earthquake statistics
+  - [ ] Implement basic visualization (e.g., chart of earthquakes by magnitude)
+  - [ ] Add filters for the dashboard view
+  - **Output**: Dashboard components for analytics
 
 ### Definition of Done for Milestone 6:
+- All planned UI views are implemented and functional
+- Users can browse, sort, filter, and view earthquake data
+- Editing and deletion of earthquake records works properly
+- UI provides a consistent and intuitive user experience
+
+## [ ] Milestone 7: Testing and Quality Assurance
+
+### Objective: Ensure the application meets quality standards through comprehensive testing.
+
+- [ ] **1. Unit Testing**:
+  - [ ] Write tests for GraphQL resolvers
+  - [ ] Test UI components in isolation
+  - [ ] Create tests for utility functions
+  - **Output**: Comprehensive unit test suite
+
+- [ ] **2. Integration Testing**:
+  - [ ] Test GraphQL queries and mutations
+  - [ ] Verify database operations work correctly
+  - [ ] Test frontend-backend integration
+  - **Output**: Integration tests for key system interactions
+
+- [ ] **3. End-to-End Testing**:
+  - [ ] Create E2E tests for critical user flows
+  - [ ] Verify application works in different browsers
+  - [ ] Test responsive behavior
+  - **Output**: E2E test suite with Playwright
+
+- [ ] **4. Accessibility Testing**:
+  - [ ] Verify WCAG compliance
+  - [ ] Test keyboard navigation
+  - [ ] Ensure proper ARIA attributes
+  - **Output**: Accessibility test reports
+
+### Definition of Done for Milestone 7:
+- Unit tests cover critical functionality
+- Integration tests verify system components work together
+- E2E tests confirm user flows function correctly
+- Application meets basic accessibility standards
+
+## [ ] Milestone 8: Documentation and Deployment
+
+### Objective: Create comprehensive documentation and prepare the application for deployment.
+
+- [ ] **1. User Documentation**:
+  - [ ] Create user guide for the application
+  - [ ] Document features and functionality
+  - [ ] Add screenshots and examples
+  - **Output**: User documentation in the repository
+
+- [ ] **2. Developer Documentation**:
+  - [ ] Document architecture and design decisions
+  - [ ] Create API documentation
+  - [ ] Add setup and contribution guidelines
+  - **Output**: Developer documentation in the repository
+
+- [ ] **3. Deployment Configuration**:
+  - [ ] Set up Docker Compose for production
+  - [ ] Configure environment variables
+  - [ ] Create deployment scripts
+  - **Output**: Deployment configuration files
+
+- [ ] **4. Final Review**:
+  - [ ] Conduct code review
+  - [ ] Address any remaining issues
+  - [ ] Prepare for submission
+  - **Output**: Final version ready for submission
+
+### Definition of Done for Milestone 8:
 - Documentation is comprehensive and clear
-- Code is clean, consistent, and follows best practices
-- All features meet requirements and work as expected
-- Project is ready for submission and evaluation
+- Deployment configuration works reliably
+- Code is clean and follows best practices
+- Project is ready for submission

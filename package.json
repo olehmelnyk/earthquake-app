@@ -13,10 +13,13 @@
     "db:migrate": "nx prisma:migrate:dev db",
     "db:deploy": "nx prisma:migrate:deploy db",
     "db:studio": "nx prisma:studio db",
-    "db:seed": "nx db:seed db"
+    "db:seed": "nx db:seed db",
+    "graphql:test": "tsx scripts/graphql-test-server.ts",
+    "graphql:query-test": "tsx scripts/test-gql-query.ts"
   },
   "private": true,
   "devDependencies": {
+    "@apollo/server": "^4.10.0",
     "@babel/core": "^7.14.5",
     "@babel/preset-react": "^7.14.5",
     "@nx/devkit": "20.5.0",
@@ -33,10 +36,11 @@
     "@swc/jest": "~0.2.36",
     "@testing-library/react": "16.1.0",
     "@types/jest": "^29.5.12",
-    "@types/node": "^22.10.5",
+    "@types/node": "^22.13.10",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
     "babel-jest": "^29.7.0",
+    "husky": "^9.0.11",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-environment-node": "^29.7.0",
@@ -45,11 +49,16 @@
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",
+    "tsup": "^8.4.0",
+    "tsx": "^4.3.0",
     "typescript": "~5.7.2"
   },
   "dependencies": {
-    "next": "~15.1.4",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "@prisma/client": "^6.5.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "cross-spawn@<6.0.6": ">=6.0.6"
+    }
   }
 }

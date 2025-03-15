@@ -14,6 +14,9 @@
       "default": "./dist/index.js"
     }
   },
+  "scripts": {
+    "dev": "tsx src/dev-server.ts"
+  },
   "nx": {
     "tags": [
       "scope:shared",
@@ -21,6 +24,14 @@
     ]
   },
   "dependencies": {
+    "@apollo/server": "^4.10.0",
+    "@earthquake-nx/db": "*",
+    "@prisma/client": "^6.5.0",
     "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "graphql-tag": "^2.12.6",
+    "prisma": "^6.5.0",
+    "tsx": "^4.3.0"
   }
 }

@@ -1,4 +1,5 @@
 import styles from './page.module.css';
+import Link from 'next/link';
 
 export default function Index() {
   /*
@@ -350,6 +351,12 @@ export default function Index() {
                   <span> Love Nx? Give us a star! </span>
                 </span>
               </a>
+              <Link 
+                href="/earthquakes" 
+                className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg"
+              >
+                View Earthquake Dashboard
+              </Link>
             </div>
           </div>
 

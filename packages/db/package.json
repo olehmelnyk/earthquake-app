@@ -41,10 +41,5 @@
   },
   "devDependencies": {
     "prisma": "^6.5.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "cross-spawn@<6.0.6": ">=6.0.6"
-    }
   }
 }
