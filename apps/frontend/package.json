@@ -12,9 +12,16 @@
     "@apollo/client": "^3.13.4",
     "@apollo/server": "^4.10.0",
     "@as-integrations/next": "^3.2.0",
+    "@earthquake-nx/ui": "*",
     "graphql": "^16.10.0",
     "next": "~15.1.4",
     "react": "19.0.0",
     "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.18",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7"
   }
 }

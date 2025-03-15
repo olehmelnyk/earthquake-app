@@ -1,40 +1,42 @@
 'use client';
 
 import { useState } from 'react';
+import { MainLayout } from '@earthquake-nx/ui';
 import { EarthquakeTable } from '../components/earthquake-table';
 import { EarthquakeFilter } from '../components/earthquake-filter';
 import type { EarthquakeFilterInput } from '../lib/hooks/use-earthquakes';
 
 export default function EarthquakePage() {
   const [filter, setFilter] = useState<EarthquakeFilterInput>({});
-  
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4">
-          <h1 className="text-3xl font-bold text-gray-900">Earthquake Management</h1>
+    <MainLayout className="bg-slate-500">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col space-y-1.5">
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">Earthquake Management</h1>
+          <p className="text-muted-foreground">View and filter earthquake data from around the world.</p>
         </div>
-      </header>
-      
-      <main className="max-w-7xl mx-auto py-6 px-4">
-        <EarthquakeFilter 
-          onFilterChange={setFilter} 
-          initialFilter={filter} 
-        />
-        
-        <div className="bg-white p-6 rounded-lg shadow mt-6">
-          <h2 className="text-xl font-semibold mb-4">Earthquake Data</h2>
-          <EarthquakeTable filter={filter} />
+
+        <div className="flex flex-col gap-4">
+          <div className="rounded-lg border bg-card shadow-sm p-6">
+            <h2 className="text-xl font-semibold mb-4 text-card-foreground">Filters</h2>
+            <EarthquakeFilter
+              onFilterChange={setFilter}
+              initialFilter={filter}
+            />
+          </div>
+
+          <div className="rounded-lg border bg-card shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-card-foreground">Earthquake Data</h2>
+              <div className="text-sm text-muted-foreground">
+                Showing the most recent earthquakes
+              </div>
+            </div>
+            <EarthquakeTable filter={filter} />
+          </div>
         </div>
-      </main>
-      
-      <footer className="bg-white border-t border-gray-200 mt-12">
-        <div className="max-w-7xl mx-auto py-6 px-4">
-          <p className="text-center text-gray-500 text-sm">
-            Earthquake Management Application — {new Date().getFullYear()}
-          </p>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </MainLayout>
   );
 }
