@@ -1,11 +1,9 @@
-import { EarthquakeDashboard } from './examples/earthquake-dashboard';
-
 /**
  * Main application entry point
- * Renders the earthquake dashboard with all components integrated
+ * Renders a placeholder UI component
  */
 export function App() {
-  return <EarthquakeDashboard />;
+  return <div>UI Components Library</div>;
 }
 
 export default App;

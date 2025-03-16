@@ -1,4 +1,5 @@
 import './global.css';
+import '@earthquake-nx/ui'; 
 import { ApolloWrapper } from '../lib/apollo-provider';
 import { ThemeProvider } from '../components/theme-provider';
 

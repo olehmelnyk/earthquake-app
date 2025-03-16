@@ -8,11 +8,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -24,15 +20,9 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@earthquake-nx/ui": [
-        "../../packages/ui/src/index.ts"
-      ],
-      "@earthquake-nx/ui/*": [
-        "../../packages/ui/src/*"
-      ]
+      "@/*": ["./src/*"],
+      "@earthquake-nx/ui": ["../../packages/ui/src/index.ts"],
+      "@earthquake-nx/ui/*": ["../../packages/ui/src/*"]
     },
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
@@ -61,6 +51,9 @@
     "src/**/*.test.jsx"
   ],
   "references": [
+    {
+      "path": "../../packages/graphql"
+    },
     {
       "path": "../../packages/ui"
     }

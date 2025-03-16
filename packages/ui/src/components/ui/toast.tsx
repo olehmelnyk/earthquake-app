@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
@@ -6,7 +8,6 @@ export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
   description?: string;
   onClose?: () => void;
-  duration?: number;
 }
 
 /**
@@ -15,10 +16,10 @@ export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
   ({ className, variant = "default", title, description, onClose, ...props }, ref) => {
     const variantStyles = {
-      default: "bg-primary text-primary-foreground",
-      success: "bg-green-600 text-white",
-      destructive: "bg-destructive text-destructive-foreground",
-      warning: "bg-yellow-500 text-white",
+      default: "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900",
+      success: "bg-green-600 text-white dark:bg-green-800 dark:text-white",
+      destructive: "bg-red-600 text-white dark:bg-red-800 dark:text-white",
+      warning: "bg-yellow-500 text-white dark:bg-yellow-700 dark:text-white",
     };
 
     return (
@@ -39,7 +40,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         {onClose && (
           <button
             onClick={onClose}
-            className="inline-flex shrink-0 rounded-md p-1 text-primary-foreground/50 opacity-70 transition-opacity hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="inline-flex shrink-0 rounded-md p-1 text-white/50 opacity-70 transition-opacity hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:text-gray-900/50 dark:focus:ring-gray-800"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x">
               <path d="M18 6 6 18"/>
@@ -52,7 +53,6 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
     );
   }
 );
-
 Toast.displayName = "Toast";
 
 export interface ToastProviderProps {
@@ -60,39 +60,36 @@ export interface ToastProviderProps {
 }
 
 export interface ToastContextType {
-  toasts: Toast[];
-  addToast: (toast: Omit<Toast, "id">) => void;
+  toasts: Array<ToastProps & { id: string }>;
+  addToast: (toast: Omit<ToastProps, "id">) => void;
   removeToast: (id: string) => void;
 }
 
-interface Toast extends Omit<ToastProps, "onClose"> {
-  id: string;
-}
-
-const ToastContext = React.createContext<ToastContextType | undefined>(undefined);
+export const ToastContext = React.createContext<ToastContextType | undefined>(
+  undefined
+);
 
 /**
  * ToastProvider component for managing toasts
  */
 export function ToastProvider({ children }: ToastProviderProps) {
-  const [toasts, setToasts] = React.useState<Toast[]>([]);
+  const [toasts, setToasts] = React.useState<Array<ToastProps & { id: string }>>([]);
 
   const addToast = React.useCallback(
-    ({ duration = 5000, ...props }: Omit<Toast, "id">) => {
+    (toast: Omit<ToastProps, "id">) => {
       const id = Math.random().toString(36).substring(2, 9);
-      setToasts((prevToasts) => [...prevToasts, { id, ...props }]);
+      setToasts((prev) => [...prev, { ...toast, id }]);
 
-      if (duration > 0) {
-        setTimeout(() => {
-          removeToast(id);
-        }, duration);
-      }
+      // Auto-remove toast after 5 seconds
+      setTimeout(() => {
+        removeToast(id);
+      }, 5000);
     },
     []
   );
 
   const removeToast = React.useCallback((id: string) => {
-    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
   const value = React.useMemo(
@@ -109,18 +106,18 @@ export function ToastProvider({ children }: ToastProviderProps) {
 }
 
 /**
- * useToast hook for accessing toast functions
+ * Hook to use toast context
  */
-export const useToast = () => {
+export function useToast() {
   const context = React.useContext(ToastContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useToast must be used within a ToastProvider");
   }
   return context;
-};
+}
 
 /**
- * ToastContainer component for rendering toasts
+ * Container component for displaying toasts
  */
 function ToastContainer() {
   const { toasts, removeToast } = useToast();

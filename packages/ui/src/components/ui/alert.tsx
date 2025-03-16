@@ -1,30 +1,34 @@
-import React from 'react';
+"use client";
+
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 
-// Alert styles defined directly without cva
-const alertStyles = {
-  base: "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
-  variants: {
-    default: "bg-background text-foreground",
-    destructive: "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
-    success: "border-green-500/50 text-green-700 dark:border-green-500 [&>svg]:text-green-500",
+const alertVariants = cva(
+  "relative w-full rounded-lg border border-gray-200 p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-gray-700 dark:border-gray-800 dark:text-gray-50 dark:shadow-lg",
+  {
+    variants: {
+      variant: {
+        default: "bg-white text-gray-900 dark:bg-gray-950",
+        destructive: "border-red-600/50 text-red-600 dark:border-red-800 dark:text-red-400 [&>svg]:text-red-600 dark:[&>svg]:text-red-400",
+        success: "border-green-500/50 text-green-700 dark:border-green-500 [&>svg]:text-green-500",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
   }
-};
+);
 
-export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: keyof typeof alertStyles.variants;
+export interface AlertProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof alertVariants> {
 }
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
-  ({ className, variant = "default", ...props }, ref) => (
+  ({ className, variant, ...props }, ref) => (
     <div
       ref={ref}
       role="alert"
-      className={cn(
-        alertStyles.base,
-        alertStyles.variants[variant],
-        className
-      )}
+      className={cn(alertVariants({ variant }), className)}
       {...props}
     />
   )
@@ -49,7 +53,7 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm [&_p]:leading-relaxed", className)}
+    className={cn("text-sm text-gray-700 dark:text-gray-400", className)}
     {...props}
   />
 ));

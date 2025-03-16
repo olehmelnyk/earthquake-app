@@ -30,8 +30,8 @@ export function EarthquakeDetailView({
   const getMagnitudeColor = (magnitude: number) => {
     if (magnitude >= 7.0) return "text-red-600 font-bold";
     if (magnitude >= 5.0) return "text-orange-500 font-bold";
-    if (magnitude >= 3.0) return "text-yellow-500";
-    return "text-green-500";
+    if (magnitude >= 3.0) return "text-yellow-600 font-bold";
+    return "text-green-600 font-bold";
   };
 
   // Format dates for display
@@ -57,7 +57,7 @@ export function EarthquakeDetailView({
             </div>
             <div className="flex justify-between items-center">
               <span className="font-medium">ID:</span>
-              <span className="text-sm text-muted-foreground truncate max-w-[220px]">{id}</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-[220px]">{id}</span>
             </div>
           </div>
 
@@ -65,13 +65,13 @@ export function EarthquakeDetailView({
             {createdAt && (
               <div className="flex justify-between items-center">
                 <span className="font-medium">Created:</span>
-                <span className="text-sm text-muted-foreground">{formatDate(createdAt)}</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(createdAt)}</span>
               </div>
             )}
             {updatedAt && (
               <div className="flex justify-between items-center">
                 <span className="font-medium">Last Updated:</span>
-                <span className="text-sm text-muted-foreground">{formatDate(updatedAt)}</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(updatedAt)}</span>
               </div>
             )}
           </div>

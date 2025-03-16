@@ -5,6 +5,7 @@ export * from "./ui/card";
 export * from "./ui/input";
 export * from "./ui/label";
 export * from "./ui/skeleton";
+export * from "./ui/slider";
 export * from "./ui/table";
 export * from "./ui/toast";
 
@@ -18,8 +19,6 @@ export * from "./forms/earthquake-form";
 
 // Layout Components
 export * from "./layout/main-layout";
-export * from "./layout/header";
-export * from "./layout/sidebar";
 export * from "./layout/theme-toggle";
 
 // Earthquake Components

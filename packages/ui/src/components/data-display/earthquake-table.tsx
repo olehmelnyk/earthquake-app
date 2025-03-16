@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Table,
   TableBody,
@@ -6,7 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { cn } from "../../lib/utils";
+import { formatDate } from '../../lib/utils';
+import { cn } from '../../lib/utils';
 
 export interface EarthquakeData {
   id: string;
@@ -32,12 +34,12 @@ export function EarthquakeTable({
   isLoading = false,
   ...props
 }: EarthquakeTableProps) {
-  // Determine magnitude color based on severity
-  const getMagnitudeColor = (magnitude: number) => {
+  // Determine magnitude class based on severity
+  const getMagnitudeClass = (magnitude: number) => {
     if (magnitude >= 7.0) return "text-red-600 font-bold";
     if (magnitude >= 5.0) return "text-orange-500 font-bold";
-    if (magnitude >= 3.0) return "text-yellow-500";
-    return "text-green-500";
+    if (magnitude >= 3.0) return "text-yellow-600 font-bold";
+    return "text-green-600 font-bold";
   };
 
   return (
@@ -54,13 +56,13 @@ export function EarthquakeTable({
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={4} className="h-24 text-center">
+              <TableCell colSpan={4} className="h-24 text-center text-gray-500 dark:text-gray-400">
                 Loading earthquake data...
               </TableCell>
             </TableRow>
           ) : earthquakes.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} className="h-24 text-center">
+              <TableCell colSpan={4} className="h-24 text-center text-gray-500 dark:text-gray-400">
                 No earthquake data found.
               </TableCell>
             </TableRow>
@@ -69,14 +71,16 @@ export function EarthquakeTable({
               <TableRow
                 key={earthquake.id}
                 onClick={() => onRowClick?.(earthquake)}
-                className={onRowClick ? "cursor-pointer hover:bg-muted/50" : ""}
+                className={onRowClick ? "cursor-pointer hover:bg-gray-100/50 dark:hover:bg-gray-800/50" : ""}
               >
                 <TableCell className="font-medium">{earthquake.location}</TableCell>
-                <TableCell className={getMagnitudeColor(earthquake.magnitude)}>
-                  {earthquake.magnitude.toFixed(1)}
+                <TableCell>
+                  <span className={getMagnitudeClass(earthquake.magnitude)}>
+                    {earthquake.magnitude.toFixed(1)}
+                  </span>
                 </TableCell>
-                <TableCell>{new Date(earthquake.date).toLocaleDateString()}</TableCell>
-                <TableCell className="text-xs text-muted-foreground">
+                <TableCell>{formatDate(earthquake.date)}</TableCell>
+                <TableCell className="text-xs text-gray-500 dark:text-gray-400">
                   {earthquake.id}
                 </TableCell>
               </TableRow>

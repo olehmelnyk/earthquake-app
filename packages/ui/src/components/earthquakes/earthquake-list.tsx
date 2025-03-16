@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
@@ -32,7 +34,7 @@ export function EarthquakeList({
     const newDirection = sortColumn === column && sortDirection === 'asc' ? 'desc' : 'asc';
     setSortColumn(column);
     setSortDirection(newDirection);
-    
+
     if (onSort) {
       onSort(column.toString(), newDirection);
     }
@@ -47,61 +49,61 @@ export function EarthquakeList({
   // Generate pagination controls
   const renderPagination = () => {
     if (totalPages <= 1) return null;
-    
+
     const pageButtons = [];
     const maxPagesToShow = 5;
-    
+
     let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
     let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-    
+
     if (endPage - startPage + 1 < maxPagesToShow) {
       startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
-    
+
     // First page button
     if (startPage > 1) {
       pageButtons.push(
-        <Button 
-          key="first" 
-          variant="outline" 
-          size="sm" 
+        <Button
+          key="first"
+          variant="outline"
+          size="sm"
           onClick={() => onPageChange?.(1)}
           disabled={currentPage === 1}
         >
           1
         </Button>
       );
-      
+
       if (startPage > 2) {
         pageButtons.push(<span key="ellipsis1" className="px-2">...</span>);
       }
     }
-    
+
     // Page number buttons
     for (let i = startPage; i <= endPage; i++) {
       pageButtons.push(
-        <Button 
-          key={i} 
-          variant={currentPage === i ? "default" : "outline"} 
-          size="sm" 
+        <Button
+          key={i}
+          variant={currentPage === i ? "default" : "outline"}
+          size="sm"
           onClick={() => onPageChange?.(i)}
         >
           {i}
         </Button>
       );
     }
-    
+
     // Last page button
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         pageButtons.push(<span key="ellipsis2" className="px-2">...</span>);
       }
-      
+
       pageButtons.push(
-        <Button 
-          key="last" 
-          variant="outline" 
-          size="sm" 
+        <Button
+          key="last"
+          variant="outline"
+          size="sm"
           onClick={() => onPageChange?.(totalPages)}
           disabled={currentPage === totalPages}
         >
@@ -109,21 +111,21 @@ export function EarthquakeList({
         </Button>
       );
     }
-    
+
     return (
       <div className="flex items-center justify-center gap-1 mt-4">
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => onPageChange?.(currentPage - 1)}
           disabled={currentPage === 1}
         >
           Previous
         </Button>
         {pageButtons}
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => onPageChange?.(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
@@ -136,9 +138,9 @@ export function EarthquakeList({
   // Helper to render sort direction indicator
   const renderSortIndicator = (column: keyof Earthquake) => {
     if (sortColumn !== column) return null;
-    
-    return sortDirection === 'asc' 
-      ? <span className="ml-1">↑</span> 
+
+    return sortDirection === 'asc'
+      ? <span className="ml-1">↑</span>
       : <span className="ml-1">↓</span>;
   };
 
@@ -147,25 +149,25 @@ export function EarthquakeList({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead 
+            <TableHead
               className="cursor-pointer"
               onClick={() => handleSort('location')}
             >
               Location {renderSortIndicator('location')}
             </TableHead>
-            <TableHead 
+            <TableHead
               className="cursor-pointer w-32"
               onClick={() => handleSort('magnitude')}
             >
               Magnitude {renderSortIndicator('magnitude')}
             </TableHead>
-            <TableHead 
+            <TableHead
               className="cursor-pointer"
               onClick={() => handleSort('date')}
             >
               Date/Time {renderSortIndicator('date')}
             </TableHead>
-            <TableHead 
+            <TableHead
               className="cursor-pointer w-32"
               onClick={() => handleSort('depth')}
             >
@@ -179,13 +181,13 @@ export function EarthquakeList({
             // Loading state
             Array.from({ length: 5 }).map((_, index) => (
               <TableRow key={`skeleton-${index}`}>
-                <TableCell className="h-12 bg-muted/30" colSpan={5}></TableCell>
+                <TableCell className="h-12 bg-gray-100/30 dark:bg-gray-800/30" colSpan={5}></TableCell>
               </TableRow>
             ))
           ) : earthquakes.length === 0 ? (
             // Empty state
             <TableRow>
-              <TableCell colSpan={5} className="h-24 text-center">
+              <TableCell colSpan={5} className="h-24 text-center text-gray-500 dark:text-gray-400">
                 No earthquakes found
               </TableCell>
             </TableRow>
@@ -197,13 +199,14 @@ export function EarthquakeList({
                 <TableCell>{earthquake.magnitude.toFixed(1)}</TableCell>
                 <TableCell>{formatDate(earthquake.date)}</TableCell>
                 <TableCell>{earthquake.depth?.toFixed(1) || 'N/A'}</TableCell>
-                <TableCell>{earthquake.description ?? 'No description'}</TableCell>
+                <TableCell className="max-w-xs truncate">
+                  {earthquake.description || 'No description available'}
+                </TableCell>
               </TableRow>
             ))
           )}
         </TableBody>
       </Table>
-      
       {renderPagination()}
     </div>
   );

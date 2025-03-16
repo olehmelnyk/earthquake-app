@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button, Label } from '@earthquake-nx/ui';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button, Label, RangeSlider } from '@earthquake-nx/ui';
 import { EarthquakeFilterInput } from '../lib/hooks/use-earthquakes';
 
 interface EarthquakeFilterProps {
@@ -12,8 +12,10 @@ interface EarthquakeFilterProps {
 export function EarthquakeFilter({ onFilterChange, initialFilter }: EarthquakeFilterProps) {
   const [filter, setFilter] = useState<EarthquakeFilterInput>(initialFilter || {});
   const [location, setLocation] = useState<string>('');
-  const [minMagnitude, setMinMagnitude] = useState<number | undefined>(filter.magnitude?.min);
-  const [maxMagnitude, setMaxMagnitude] = useState<number | undefined>(filter.magnitude?.max);
+  const [magnitudeRange, setMagnitudeRange] = useState<[number, number]>([
+    filter.magnitude?.min ?? 0,
+    filter.magnitude?.max ?? 10
+  ]);
   const [startDate, setStartDate] = useState<string | undefined>(
     filter.date?.start ? new Date(filter.date.start).toISOString().split('T')[0] : undefined
   );
@@ -30,10 +32,11 @@ export function EarthquakeFilter({ onFilterChange, initialFilter }: EarthquakeFi
       newFilter.location = location;
     }
 
-    if (minMagnitude !== undefined || maxMagnitude !== undefined) {
-      newFilter.magnitude = {};
-      if (minMagnitude !== undefined) newFilter.magnitude.min = minMagnitude;
-      if (maxMagnitude !== undefined) newFilter.magnitude.max = maxMagnitude;
+    if (magnitudeRange[0] > 0 || magnitudeRange[1] < 10) {
+      newFilter.magnitude = {
+        min: magnitudeRange[0],
+        max: magnitudeRange[1]
+      };
     }
 
     if (startDate || endDate) {
@@ -49,8 +52,7 @@ export function EarthquakeFilter({ onFilterChange, initialFilter }: EarthquakeFi
   // Reset all filters
   const resetFilters = () => {
     setLocation('');
-    setMinMagnitude(undefined);
-    setMaxMagnitude(undefined);
+    setMagnitudeRange([0, 10]);
     setStartDate(undefined);
     setEndDate(undefined);
 
@@ -59,13 +61,18 @@ export function EarthquakeFilter({ onFilterChange, initialFilter }: EarthquakeFi
     onFilterChange(emptyFilter);
   };
 
+  // Handle magnitude range change
+  const handleMagnitudeRangeChange = (values: [number, number]) => {
+    setMagnitudeRange(values);
+  };
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Filter Earthquakes</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Location filter */}
           <div className="space-y-2">
             <Label htmlFor="location">Location</Label>
@@ -74,34 +81,9 @@ export function EarthquakeFilter({ onFilterChange, initialFilter }: EarthquakeFi
               type="text"
               value={location}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocation(e.target.value)}
-              placeholder="Enter location..."
+              placeholder="e.g., 37.7749, 122.4194"
               className="w-full p-2 border rounded"
             />
-          </div>
-
-          {/* Magnitude filters */}
-          <div className="space-y-2">
-            <Label>Magnitude Range</Label>
-            <div className="flex space-x-2">
-              <input
-                type="number"
-                value={minMagnitude === undefined ? '' : minMagnitude}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMinMagnitude(e.target.value === '' ? undefined : Number(e.target.value))}
-                placeholder="Min"
-                step="0.1"
-                min="0"
-                className="w-full p-2 border rounded"
-              />
-              <input
-                type="number"
-                value={maxMagnitude === undefined ? '' : maxMagnitude}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMaxMagnitude(e.target.value === '' ? undefined : Number(e.target.value))}
-                placeholder="Max"
-                step="0.1"
-                min="0"
-                className="w-full p-2 border rounded"
-              />
-            </div>
           </div>
 
           {/* Date filters */}
@@ -121,6 +103,25 @@ export function EarthquakeFilter({ onFilterChange, initialFilter }: EarthquakeFi
                 className="w-full p-2 border rounded"
               />
             </div>
+          </div>
+          
+          {/* Magnitude range slider */}
+          <div className="space-y-4 md:col-span-2">
+            <div className="flex justify-between items-center">
+              <Label>Magnitude Range</Label>
+              <div className="text-sm font-medium">
+                {magnitudeRange[0].toFixed(1)} - {magnitudeRange[1].toFixed(1)}
+              </div>
+            </div>
+            
+            <RangeSlider
+              min={0}
+              max={10}
+              step={0.1}
+              values={magnitudeRange}
+              onChange={handleMagnitudeRangeChange}
+              formatValue={(value) => value.toFixed(1)}
+            />
           </div>
         </div>
       </CardContent>
