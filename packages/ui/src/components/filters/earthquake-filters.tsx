@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { DateRange } from 'react-day-picker';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { RangeSlider } from '../ui/slider';
+import { DateRangePicker } from '../ui/date-range-picker';
 import { FilterValues } from '../../types';
 
 export interface EarthquakeFiltersProps {
@@ -35,6 +37,7 @@ export function EarthquakeFilters({
       initialFilters.minMagnitude ?? 0,
       initialFilters.maxMagnitude ?? 10
     ]);
+    
     setFilters(initialFilters);
   }, [initialFilters]);
 
@@ -113,24 +116,20 @@ export function EarthquakeFilters({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="startDate">Start Date</Label>
-          <Input
-            id="startDate"
-            name="startDate"
-            type="date"
-            value={filters.startDate || ''}
-            onChange={handleInputChange}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="endDate">End Date</Label>
-          <Input
-            id="endDate"
-            name="endDate"
-            type="date"
-            value={filters.endDate || ''}
-            onChange={handleInputChange}
+          <Label>Date Range</Label>
+          <DateRangePicker
+            value={{
+              from: filters.startDate ? new Date(filters.startDate) : undefined,
+              to: filters.endDate ? new Date(filters.endDate) : undefined
+            }}
+            onChange={(dateRange: DateRange | undefined) => {
+              setFilters((prev) => ({
+                ...prev,
+                startDate: dateRange?.from ? dateRange.from.toISOString().split('T')[0] : '',
+                endDate: dateRange?.to ? dateRange.to.toISOString().split('T')[0] : '',
+              }));
+              onFilterChange(filters);
+            }}
           />
         </div>
 

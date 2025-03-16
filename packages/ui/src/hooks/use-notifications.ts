@@ -25,7 +25,6 @@ export function useNotifications() {
       variant,
       title,
       description,
-      duration,
     });
   };
 

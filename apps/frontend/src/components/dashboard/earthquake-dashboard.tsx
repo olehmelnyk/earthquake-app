@@ -6,7 +6,10 @@ import {
   CardTitle, 
   CardDescription,
   EarthquakeFilters, 
-  FilterValues
+  FilterValues,
+  DataTable,
+  earthquakeColumns,
+  EarthquakeTableData
 } from '@earthquake-nx/ui';
 
 // Define Earthquake interface locally to match what the UI component expects
@@ -60,6 +63,16 @@ export const EarthquakeDashboard = () => {
 
     return true;
   });
+
+  // Map to EarthquakeTableData format
+  const tableData: EarthquakeTableData[] = filteredEarthquakes.map(eq => ({
+    id: eq.id,
+    magnitude: eq.magnitude,
+    place: eq.location, // Use location as place
+    time: new Date(eq.date).toISOString(), // Convert date to ISO string
+    location: eq.location,
+    date: eq.date
+  }));
 
   // Calculate statistics
   const avgMagnitude = filteredEarthquakes.length > 0 
@@ -140,36 +153,17 @@ export const EarthquakeDashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-secondary">
-                    <tr className="text-left">
-                      <th className="p-4 font-medium">ID</th>
-                      <th className="p-4 font-medium">Magnitude</th>
-                      <th className="p-4 font-medium">Location</th>
-                      <th className="p-4 font-medium">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredEarthquakes.length > 0 ? (
-                      filteredEarthquakes.map((eq) => (
-                        <tr key={eq.id} className="border-b hover:bg-muted/50">
-                          <td className="p-4">{eq.id}</td>
-                          <td className="p-4">{eq.magnitude.toFixed(1)}</td>
-                          <td className="p-4">{eq.location}</td>
-                          <td className="p-4">{eq.date}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan={4} className="p-4 text-center text-muted-foreground">
-                          No earthquakes found matching your criteria.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+              {filteredEarthquakes.length > 0 ? (
+                <DataTable 
+                  columns={earthquakeColumns} 
+                  data={tableData}
+                  pageSize={5}
+                />
+              ) : (
+                <div className="p-6 text-center text-muted-foreground">
+                  No earthquakes found matching your criteria.
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
