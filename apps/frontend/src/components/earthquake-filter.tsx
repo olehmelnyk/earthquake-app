@@ -1,9 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from './ui/card';
-import { Button } from './ui/button';
-import { Label } from './ui/label';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button, Label } from '@earthquake-nx/ui';
 import { EarthquakeFilterInput } from '../lib/hooks/use-earthquakes';
 
 interface EarthquakeFilterProps {

@@ -12,10 +12,14 @@ export * from './components/filters/earthquake-filters';
 export * from './components/forms/earthquake-form';
 
 // UI components
+export * from './components/ui/alert';
+export * from './components/ui/button';
+export * from './components/ui/card';
+export * from './components/ui/input';
+export * from './components/ui/label';
+export * from './components/ui/skeleton';
 export * from './components/ui/table';
-
-// Examples
-export * from './examples/earthquake-dashboard';
+export * from './components/ui/toast';
 
 // Utilities
 export * from './lib/utils';

@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
-      <body style={{ margin: 0, padding: 0, width: '100%', minHeight: '100vh' }}>
+      <body suppressHydrationWarning className="m-0 p-0 w-full min-h-screen">
         <ThemeProvider defaultTheme="system" storageKey="theme">
           <ApolloWrapper>
             {children}

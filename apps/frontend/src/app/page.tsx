@@ -5,9 +5,9 @@ import { Header } from '../components/layout/header';
 
 export default function HomePage() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
+    <div className="flex flex-col min-h-screen w-full">
       <Header />
-      <main style={{ flex: '1', padding: '1.5rem' }}>
+      <main className="flex-1 p-6">
         <EarthquakeDashboard />
       </main>
     </div>
