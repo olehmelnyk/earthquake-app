@@ -47,7 +47,7 @@ earthquake-app/
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - pnpm 10+
 - Docker and Docker Compose
 

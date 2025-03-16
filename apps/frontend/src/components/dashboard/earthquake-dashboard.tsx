@@ -1,18 +1,36 @@
-import { useState } from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle, 
+import { useState, useEffect } from 'react';
+import { useQuery } from '@apollo/client';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   CardDescription,
-  EarthquakeFilters, 
+  EarthquakeFilters,
   FilterValues,
   DataTable,
   earthquakeColumns,
-  EarthquakeTableData
+  EarthquakeTableData,
 } from '@earthquake-nx/ui';
+import { GET_EARTHQUAKES, GET_FILTER_OPTIONS } from '../../lib/graphql/queries';
 
-// Define Earthquake interface locally to match what the UI component expects
+// Define interfaces for GraphQL response types
+interface MagnitudeRange {
+  min: number;
+  max: number;
+}
+
+interface DateRange {
+  earliest: string;
+  latest: string;
+}
+
+interface FilterOptions {
+  locations: string[];
+  magnitudeRange: MagnitudeRange;
+  dateRange: DateRange;
+}
+
 interface Earthquake {
   id: string;
   magnitude: number;
@@ -20,14 +38,24 @@ interface Earthquake {
   date: string;
 }
 
-// Mock data for demonstration
-const dummyEarthquakes: Earthquake[] = [
-  { id: '1', magnitude: 5.4, location: '37.7749,-122.4194', date: '2023-09-15' },
-  { id: '2', magnitude: 4.2, location: '34.0522,-118.2437', date: '2023-09-14' },
-  { id: '3', magnitude: 3.8, location: '47.6062,-122.3321', date: '2023-09-13' },
-  { id: '4', magnitude: 3.2, location: '45.5051,-122.6750', date: '2023-09-12' },
-  { id: '5', magnitude: 4.7, location: '32.7157,-117.1611', date: '2023-09-11' },
-];
+interface PageInfo {
+  totalCount: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+interface EarthquakesResponse {
+  edges: Earthquake[];
+  pageInfo: PageInfo;
+}
+
+interface EarthquakesData {
+  earthquakes: EarthquakesResponse;
+}
+
+interface FilterOptionsData {
+  filterOptions: FilterOptions;
+}
 
 export const EarthquakeDashboard = () => {
   const [filters, setFilters] = useState<FilterValues>({
@@ -38,51 +66,125 @@ export const EarthquakeDashboard = () => {
     endDate: '',
   });
 
-  // Filter the earthquakes based on selected filters
-  const filteredEarthquakes = dummyEarthquakes.filter((eq) => {
-    // Location filter
-    if (filters.location && !eq.location.toLowerCase().includes(filters.location.toLowerCase())) {
-      return false;
-    }
+  // Query for filter options
+  const { data: filterOptionsData, error: filterOptionsError } =
+    useQuery<FilterOptionsData>(GET_FILTER_OPTIONS);
 
-    // Magnitude filter
-    if (filters.minMagnitude !== undefined && eq.magnitude < filters.minMagnitude) {
-      return false;
+  // Update filters with default values from filter options when available
+  useEffect(() => {
+    if (filterOptionsData?.filterOptions) {
+      const { magnitudeRange, dateRange } = filterOptionsData.filterOptions;
+      setFilters((prev) => ({
+        ...prev,
+        minMagnitude: magnitudeRange.min,
+        maxMagnitude: magnitudeRange.max,
+        startDate: dateRange.earliest,
+        endDate: dateRange.latest,
+      }));
     }
-    if (filters.maxMagnitude !== undefined && eq.magnitude > filters.maxMagnitude) {
-      return false;
+    
+    // Log any errors with filter options
+    if (filterOptionsError) {
+      console.error('Error fetching filter options:', filterOptionsError);
     }
+  }, [filterOptionsData, filterOptionsError]);
 
-    // Date filter
-    if (filters.startDate && new Date(eq.date) < new Date(filters.startDate)) {
-      return false;
-    }
-    if (filters.endDate && new Date(eq.date) > new Date(filters.endDate)) {
-      return false;
-    }
+  // Prepare GraphQL variables from filters
+  const graphqlVariables = {
+    filter: {
+      location: filters.location || undefined,
+      magnitude: {
+        min:
+          filters.minMagnitude !== undefined ? filters.minMagnitude : undefined,
+        max:
+          filters.maxMagnitude !== undefined ? filters.maxMagnitude : undefined,
+      },
+      date: {
+        start: filters.startDate || undefined,
+        end: filters.endDate || undefined,
+      },
+    },
+    pagination: {
+      skip: 0,
+      take: 50, // Fetch up to 50 earthquakes
+    },
+    orderBy: {
+      field: 'date',
+      direction: 'desc',
+    },
+  };
 
-    return true;
-  });
+  // Query for earthquakes data
+  const { data: earthquakesData, loading, error: earthquakesError } = useQuery<EarthquakesData>(
+    GET_EARTHQUAKES,
+    { 
+      variables: graphqlVariables,
+      fetchPolicy: 'network-only', // Don't cache results
+    }
+  );
+  
+  // Log GraphQL variables and any errors
+  useEffect(() => {
+    console.log('GraphQL Variables:', graphqlVariables);
+    
+    if (earthquakesError) {
+      console.error('Error fetching earthquakes:', earthquakesError);
+    }
+    
+    if (earthquakesData) {
+      console.log('Received earthquake data:', earthquakesData);
+    }
+  }, [graphqlVariables, earthquakesData, earthquakesError]);
 
   // Map to EarthquakeTableData format
-  const tableData: EarthquakeTableData[] = filteredEarthquakes.map(eq => ({
+  const tableData: EarthquakeTableData[] = earthquakesData?.earthquakes.edges.map(eq => ({
     id: eq.id,
     magnitude: eq.magnitude,
-    place: eq.location, // Use location as place
+    location: eq.location, // Use location as the primary field
     time: new Date(eq.date).toISOString(), // Convert date to ISO string
-    location: eq.location,
     date: eq.date
-  }));
+  })) || [];
 
   // Calculate statistics
-  const avgMagnitude = filteredEarthquakes.length > 0 
-    ? filteredEarthquakes.reduce((acc, eq) => acc + eq.magnitude, 0) / filteredEarthquakes.length 
-    : 0;
+  const earthquakes = earthquakesData?.earthquakes.edges || [];
+  const totalCount = earthquakesData?.earthquakes.pageInfo.totalCount || 0;
 
-  const latestEarthquake = filteredEarthquakes.length > 0 
-    ? filteredEarthquakes.reduce((latest, eq) => 
-        new Date(latest.date) > new Date(eq.date) ? latest : eq, filteredEarthquakes[0]).date
-    : 'N/A';
+  const avgMagnitude =
+    earthquakes.length > 0
+      ? earthquakes.reduce((acc, eq) => acc + eq.magnitude, 0) /
+        earthquakes.length
+      : 0;
+
+  // Format the latest earthquake date in a more readable way
+  const formatLatestEarthquake = (dateString: string): string => {
+    if (!dateString || dateString === 'N/A') return 'N/A';
+    
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }) + '\n' + date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  const latestEarthquake =
+    earthquakes.length > 0
+      ? earthquakes.reduce(
+          (latest, eq) =>
+            new Date(latest.date) > new Date(eq.date) ? latest : eq,
+          earthquakes[0]
+        ).date
+      : 'N/A';
+  
+  const formattedLatestEarthquake = formatLatestEarthquake(latestEarthquake);
 
   const handleFilterChange = (newFilters: FilterValues) => {
     setFilters(newFilters);
@@ -117,7 +219,7 @@ export const EarthquakeDashboard = () => {
                 <CardDescription>Matching your filters</CardDescription>
               </CardHeader>
               <CardContent className="pt-1 text-center">
-                <p className="text-3xl font-bold">{filteredEarthquakes.length}</p>
+                <p className="text-3xl font-bold">{totalCount}</p>
               </CardContent>
             </Card>
             
@@ -137,7 +239,7 @@ export const EarthquakeDashboard = () => {
                 <CardDescription>Most recent event</CardDescription>
               </CardHeader>
               <CardContent className="pt-1 text-center">
-                <p className="text-3xl font-bold">{latestEarthquake}</p>
+                <p className="text-lg font-bold whitespace-pre-line">{formattedLatestEarthquake}</p>
               </CardContent>
             </Card>
           </div>
@@ -147,17 +249,24 @@ export const EarthquakeDashboard = () => {
             <CardHeader className="px-6 py-4">
               <CardTitle>Earthquake Data</CardTitle>
               <CardDescription>
-                {filteredEarthquakes.length > 0 
-                  ? `Showing ${filteredEarthquakes.length} earthquakes` 
-                  : "No earthquakes match your filters"}
+                {loading ? "Loading earthquake data..." : 
+                  totalCount > 0 
+                    ? `Showing ${Math.min(earthquakes.length, totalCount)} of ${totalCount} earthquakes` 
+                    : "No earthquakes match your filters"}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
-              {filteredEarthquakes.length > 0 ? (
+              {loading ? (
+                <div className="p-6 text-center text-muted-foreground">
+                  Loading earthquake data...
+                </div>
+              ) : earthquakes.length > 0 ? (
                 <DataTable 
                   columns={earthquakeColumns} 
                   data={tableData}
-                  pageSize={5}
+                  pageSize={10}
+                  searchable={true}
+                  searchColumn="location"
                 />
               ) : (
                 <div className="p-6 text-center text-muted-foreground">
