@@ -92,13 +92,13 @@ export function EarthquakeFilter({ onFilterChange, initialFilter }: EarthquakeFi
             <div className="flex space-x-2">
               <input
                 type="date"
-                value={startDate || ''}
+                value={startDate ?? ''}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStartDate(e.target.value || undefined)}
                 className="w-full p-2 border rounded"
               />
               <input
                 type="date"
-                value={endDate || ''}
+                value={endDate ?? ''}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEndDate(e.target.value || undefined)}
                 className="w-full p-2 border rounded"
               />

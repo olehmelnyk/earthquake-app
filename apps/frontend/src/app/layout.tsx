@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import './global.css';
 import { Toaster } from "@earthquake-app/ui";
-import { ClientProviders } from '../components/client-providers';
+import { ClientProviders } from '../lib/providers/client-providers';
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: 'Earthquake App',

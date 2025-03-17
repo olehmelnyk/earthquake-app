@@ -30,7 +30,6 @@ export { useToast, toast } from "./ui/use-toast";
 export { Toaster } from "./ui/toaster";
 
 // Data Display Components
-export * from "./data-display/earthquake-table";
 export * from "./data-display/earthquake-detail-view";
 export * from "./data-display/earthquake-card";
 

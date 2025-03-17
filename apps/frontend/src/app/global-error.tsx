@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { Button } from '@earthquake-app/ui';
-import './global.css';
+import './globals.css';
 
 export default function GlobalError({
   error,

@@ -51,7 +51,7 @@ export const earthquakeColumns: ColumnDef<EarthquakeTableData>[] = [
     header: "Magnitude",
     cell: ({ row }) => {
       const magnitude = parseFloat(row.getValue("magnitude"));
-      
+
       // Add color based on magnitude
       let colorClass = "text-green-600";
       if (magnitude >= 7) {
@@ -61,7 +61,7 @@ export const earthquakeColumns: ColumnDef<EarthquakeTableData>[] = [
       } else if (magnitude >= 3) {
         colorClass = "text-yellow-600";
       }
-      
+
       return <div className={`font-medium ${colorClass}`}>{magnitude.toFixed(1)}</div>;
     },
   },
@@ -71,10 +71,10 @@ export const earthquakeColumns: ColumnDef<EarthquakeTableData>[] = [
     cell: ({ row }) => {
       // Use location from the row data
       const location = row.getValue("location") as string || row.original.location || "Unknown";
-      
+
       // Format coordinates if it's a coordinate string
       const formattedLocation = formatCoordinates(location);
-      
+
       return <div className="max-w-[200px] truncate" title={location}>{formattedLocation}</div>;
     },
   },
@@ -84,7 +84,7 @@ export const earthquakeColumns: ColumnDef<EarthquakeTableData>[] = [
     cell: ({ row }) => {
       // Use date from the row data
       const date = row.getValue("date") as string || row.original.date || "Unknown";
-      
+
       return <div>{formatDate(date)}</div>;
     },
   },
@@ -93,13 +93,13 @@ export const earthquakeColumns: ColumnDef<EarthquakeTableData>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const actions = row.original.actions;
-      
+
       if (!actions) {
         return null;
       }
-      
+
       return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 justify-end">
           {actions.onEdit && (
             <button
               onClick={actions.onEdit}

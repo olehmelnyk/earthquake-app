@@ -1,6 +1,6 @@
 'use client';
 
-import { ApolloWrapper } from '../lib/apollo-provider';
+import { ApolloWrapper } from './apollo-provider';
 import { ThemeProvider } from './theme-provider';
 
 interface ClientProvidersProps {

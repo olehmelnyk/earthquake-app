@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from '../theme-provider';
+import { useTheme } from '../../lib/providers/theme-provider';
 
 /**
  * Theme toggle component for switching between light and dark themes
@@ -59,7 +59,7 @@ export const ThemeToggle = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: theme === 'dark' ? 'hsl(var(--secondary))' : 'hsl(var(--secondary))', 
+        background: theme === 'dark' ? 'hsl(var(--secondary))' : 'hsl(var(--secondary))',
         border: '1px solid hsl(var(--border))',
         cursor: 'pointer',
         color: 'hsl(var(--foreground))',

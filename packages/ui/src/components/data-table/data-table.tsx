@@ -69,7 +69,7 @@ export function DataTable<TData, TValue>({
     currentSorting ? [{ id: currentSorting.field, desc: currentSorting.direction === "desc" }] : []
   )
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  
+
   // Initialize globalFilter with the search term from URL if available
   const [globalFilter, setGlobalFilter] = useState<string>(() => {
     // Check if we're in a browser environment
@@ -84,44 +84,44 @@ export function DataTable<TData, TValue>({
   const serverSidePagination = !!onPageChange;
   const serverSideSorting = !!onSortChange;
   const serverSideSearch = !!onSearch;
-  
+
   // Handle sorting changes
   const handleSortingChange: OnChangeFn<SortingState> = (updaterOrValue) => {
     // Handle both function updater and direct value
-    const updatedSorting = typeof updaterOrValue === 'function' 
-      ? updaterOrValue(sorting) 
+    const updatedSorting = typeof updaterOrValue === 'function'
+      ? updaterOrValue(sorting)
       : updaterOrValue;
-    
+
     setSorting(updatedSorting);
-    
+
     if (serverSideSorting && updatedSorting.length > 0) {
       const sortItem = updatedSorting[0];
       onSortChange?.(
-        sortItem.id, 
+        sortItem.id,
         sortItem.desc ? "desc" : "asc"
       );
     }
   }
-  
+
   // Handle search input changes
   const handleSearchChange = (value: string) => {
     setGlobalFilter(value);
-    
+
     if (serverSideSearch) {
       // Instead of calling onSearch immediately, set a timeout
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
       }
-      
+
       searchTimeoutRef.current = setTimeout(() => {
         onSearch?.(value);
       }, 500); // 500ms delay
     }
   };
-  
+
   // Ref for debouncing search
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Clear timeout on unmount
   useEffect(() => {
     return () => {
@@ -130,7 +130,7 @@ export function DataTable<TData, TValue>({
       }
     };
   }, []);
-  
+
   const table = useReactTable({
     data,
     columns,
@@ -177,7 +177,7 @@ export function DataTable<TData, TValue>({
   };
 
   const handleNextPage = () => {
-    if (onPageChange && currentPagination && totalCount && 
+    if (onPageChange && currentPagination && totalCount &&
         (currentPagination.skip || 0) + (currentPagination.take || pageSize) < totalCount) {
       onPageChange({
         skip: (currentPagination.skip || 0) + (currentPagination.take || pageSize),
@@ -190,7 +190,7 @@ export function DataTable<TData, TValue>({
 
   // Calculate display information
   let startRow, endRow, filteredRowsLength;
-  
+
   if (serverSidePagination && currentPagination && totalCount) {
     startRow = (currentPagination.skip || 0) + 1;
     endRow = Math.min((currentPagination.skip || 0) + (currentPagination.take || pageSize), totalCount);
@@ -310,7 +310,7 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center space-x-2">
           <div className="flex items-center justify-center text-sm font-medium mr-4">
             Page {serverSidePagination ? currentPage + 1 : table.getState().pagination.pageIndex + 1} of{" "}
-            {serverSidePagination && totalCount 
+            {serverSidePagination && totalCount
               ? Math.ceil(totalCount / (currentPagination?.take || pageSize))
               : table.getPageCount()}
           </div>
@@ -318,18 +318,18 @@ export function DataTable<TData, TValue>({
             variant="outline"
             size="sm"
             onClick={handlePreviousPage}
-            disabled={serverSidePagination 
+            disabled={serverSidePagination
               ? (currentPagination?.skip || 0) === 0
               : !table.getCanPreviousPage()}
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
-            Previous
+            Prev
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={handleNextPage}
-            disabled={serverSidePagination 
+            disabled={serverSidePagination
               ? (currentPagination?.skip || 0) + (currentPagination?.take || pageSize) >= (totalCount || 0)
               : !table.getCanNextPage()}
           >

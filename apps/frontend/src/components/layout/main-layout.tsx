@@ -2,8 +2,8 @@
 
 import { ReactNode } from 'react';
 import { Header } from './header';
-import { ApolloWrapper } from '../../lib/apollo-provider';
-import { ThemeProvider } from '../theme-provider';
+import { ApolloWrapper } from '../../lib/providers/apollo-provider';
+import { ThemeProvider } from '../../lib/providers/theme-provider';
 
 export interface MainLayoutProps {
   children: ReactNode;
