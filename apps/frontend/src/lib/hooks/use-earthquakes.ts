@@ -1,73 +1,28 @@
 import { useMemo } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import type { SortDirection, SortField } from '../types/graphql';
+import { useQuery } from '@apollo/client';
+import { 
+  GET_EARTHQUAKES, 
+  EarthquakeFilterInput, 
+  OrderByInput, 
+  PaginationInput, 
+  EarthquakesResponse,
+  Earthquake,
+  PageInfo,
+  SortField,
+  SortDirection
+} from '../graphql/queries';
 
-// Define the GraphQL query with all the necessary parameters
-const EARTHQUAKES_QUERY = gql`
-  query GetEarthquakes(
-    $filter: EarthquakeFilterInput
-    $orderBy: OrderByInput
-    $pagination: PaginationInput
-  ) {
-    earthquakes(filter: $filter, orderBy: $orderBy, pagination: $pagination) {
-      edges {
-        id
-        location
-        magnitude
-        date
-        createdAt
-        updatedAt
-      }
-      pageInfo {
-        totalCount
-        hasNextPage
-        hasPreviousPage
-      }
-    }
-  }
-`;
-
-export interface EarthquakeFilterInput {
-  location?: string;
-  magnitude?: {
-    min?: number;
-    max?: number;
-  };
-  date?: {
-    start?: Date;
-    end?: Date;
-  };
-}
-
-export interface PaginationInput {
-  skip?: number;
-  take?: number;
-}
-
-export interface OrderByInput {
-  field: SortField;
-  direction: SortDirection;
-}
-
-export interface Earthquake {
-  id: string;
-  location: string;
-  magnitude: number;
-  date: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PageInfo {
-  totalCount: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
-export interface EarthquakesResponse {
-  edges: Earthquake[];
-  pageInfo: PageInfo;
-}
+// Re-export types for backward compatibility
+export type { 
+  EarthquakeFilterInput, 
+  OrderByInput, 
+  PaginationInput, 
+  EarthquakesResponse,
+  Earthquake,
+  PageInfo,
+  SortField,
+  SortDirection
+};
 
 export interface UseEarthquakesOptions {
   filter?: EarthquakeFilterInput;
@@ -79,26 +34,26 @@ export interface UseEarthquakesOptions {
 export const useEarthquakes = (options: UseEarthquakesOptions = {}) => {
   const { filter, orderBy, pagination, skip = false } = options;
 
-  // Set default values
-  const variables = useMemo(() => {
-    return {
-      filter,
-      orderBy: orderBy || { field: 'date', direction: 'desc' },
-      pagination: pagination || { skip: 0, take: 10 },
-    };
-  }, [filter, orderBy, pagination]);
+  const variables = useMemo(() => ({
+    filter,
+    orderBy,
+    pagination,
+  }), [filter, orderBy, pagination]);
 
   const { data, loading, error, refetch } = useQuery<{ earthquakes: EarthquakesResponse }>(
-    EARTHQUAKES_QUERY,
+    GET_EARTHQUAKES,
     {
       variables,
       skip,
-      notifyOnNetworkStatusChange: true,
     }
   );
 
-  const earthquakes = data?.earthquakes.edges || [];
-  const pageInfo = data?.earthquakes.pageInfo || { totalCount: 0, hasNextPage: false, hasPreviousPage: false };
+  const earthquakes = data?.earthquakes?.edges || [];
+  const pageInfo = data?.earthquakes?.pageInfo || { 
+    totalCount: 0, 
+    hasNextPage: false, 
+    hasPreviousPage: false 
+  };
 
   return {
     earthquakes,

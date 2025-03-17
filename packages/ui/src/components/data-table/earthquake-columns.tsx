@@ -7,8 +7,11 @@ export interface EarthquakeTableData {
   id: string
   magnitude: number
   location: string
-  time: string
-  date?: string
+  date: string
+  actions?: {
+    onEdit?: () => void
+    onDelete?: () => void
+  }
 }
 
 // Helper function to format coordinates
@@ -76,18 +79,74 @@ export const earthquakeColumns: ColumnDef<EarthquakeTableData>[] = [
     },
   },
   {
-    accessorKey: "time",
+    accessorKey: "date",
     header: "Date & Time",
     cell: ({ row }) => {
-      // Use time or date depending on what's available
-      const time = row.getValue("time") as string;
-      const date = row.original.date;
+      // Use date from the row data
+      const date = row.getValue("date") as string || row.original.date || "Unknown";
       
-      if (time) {
-        return <div>{formatDate(time)}</div>;
+      return <div>{formatDate(date)}</div>;
+    },
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => {
+      const actions = row.original.actions;
+      
+      if (!actions) {
+        return null;
       }
       
-      return <div>{date ? formatDate(date) : "Unknown"}</div>;
+      return (
+        <div className="flex items-center space-x-2">
+          {actions.onEdit && (
+            <button
+              onClick={actions.onEdit}
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8 p-0"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              <span className="sr-only">Edit</span>
+            </button>
+          )}
+          {actions.onDelete && (
+            <button
+              onClick={actions.onDelete}
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8 p-0 hover:text-red-500"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              <span className="sr-only">Delete</span>
+            </button>
+          )}
+        </div>
+      );
     },
   },
 ]

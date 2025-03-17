@@ -34,6 +34,23 @@ async function startTestServer() {
     const server = new ApolloServer({
       typeDefs,
       resolvers,
+      includeStacktraceInErrorResponses: true, // Include stack traces in development
+      formatError: (error) => {
+        // Log the full error details for debugging
+        console.error('GraphQL Error:', JSON.stringify({
+          message: error.message,
+          path: error.path,
+          locations: error.locations,
+          extensions: error.extensions,
+        }, null, 2));
+        
+        // Return a more detailed error for debugging
+        return {
+          message: error.message,
+          path: error.path,
+          extensions: error.extensions,
+        };
+      },
     });
     console.log('✅ Apollo Server created');
     

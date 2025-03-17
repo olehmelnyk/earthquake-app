@@ -1,8 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useEarthquakes, type OrderByInput, type PaginationInput, type EarthquakeFilterInput } from '../lib/hooks/use-earthquakes';
-import { SortDirection, SortField } from '../lib/types/graphql';
+import { useEarthquakes } from '../lib/hooks/use-earthquakes';
+import { 
+  OrderByInput, 
+  PaginationInput, 
+  EarthquakeFilterInput,
+  SortDirection,
+  SortField
+} from '../lib/graphql/queries';
 
 interface EarthquakeTableProps {
   filter?: EarthquakeFilterInput;
@@ -16,8 +22,8 @@ export function EarthquakeTable({ filter }: EarthquakeTableProps) {
   });
 
   const [orderBy, setOrderBy] = useState<OrderByInput>({
-    field: SortField.DATE,
-    direction: SortDirection.DESC,
+    field: SortField.date,
+    direction: SortDirection.desc,
   });
 
   // Use our custom hook to fetch earthquakes
@@ -51,9 +57,9 @@ export function EarthquakeTable({ filter }: EarthquakeTableProps) {
     setOrderBy((prev) => ({
       field,
       direction:
-        prev.field === field && prev.direction === SortDirection.ASC
-          ? SortDirection.DESC
-          : SortDirection.ASC,
+        prev.field === field && prev.direction === SortDirection.asc
+          ? SortDirection.desc
+          : SortDirection.asc,
     }));
   };
 
@@ -71,23 +77,23 @@ export function EarthquakeTable({ filter }: EarthquakeTableProps) {
         <thead>
           <tr className="bg-gray-100">
             <th
-              onClick={() => handleSort(SortField.LOCATION)}
+              onClick={() => handleSort(SortField.location)}
               className="px-4 py-2 text-left cursor-pointer hover:bg-gray-200"
             >
-              Location {orderBy.field === SortField.LOCATION && (orderBy.direction === SortDirection.ASC ? '↑' : '↓')}
+              Location {orderBy.field === SortField.location && (orderBy.direction === SortDirection.asc ? '↑' : '↓')}
             </th>
             <th
-              onClick={() => handleSort(SortField.MAGNITUDE)}
+              onClick={() => handleSort(SortField.magnitude)}
               className="px-4 py-2 text-left cursor-pointer hover:bg-gray-200"
             >
               Magnitude{' '}
-              {orderBy.field === SortField.MAGNITUDE && (orderBy.direction === SortDirection.ASC ? '↑' : '↓')}
+              {orderBy.field === SortField.magnitude && (orderBy.direction === SortDirection.asc ? '↑' : '↓')}
             </th>
             <th
-              onClick={() => handleSort(SortField.DATE)}
+              onClick={() => handleSort(SortField.date)}
               className="px-4 py-2 text-left cursor-pointer hover:bg-gray-200"
             >
-              Date {orderBy.field === SortField.DATE && (orderBy.direction === SortDirection.ASC ? '↑' : '↓')}
+              Date {orderBy.field === SortField.date && (orderBy.direction === SortDirection.asc ? '↑' : '↓')}
             </th>
           </tr>
         </thead>

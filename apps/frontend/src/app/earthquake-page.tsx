@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { MainLayout } from '../components/layout/main-layout';
 import { EarthquakeFilters } from '@earthquake-nx/ui';
 import { EarthquakeTable } from '../components/earthquake-table';
-import type { EarthquakeFilterInput } from '../lib/hooks/use-earthquakes';
+import type { EarthquakeFilterInput } from '../lib/graphql/queries';
 
 export default function EarthquakePage() {
   const [filter, setFilter] = useState<EarthquakeFilterInput>({});
@@ -26,8 +26,8 @@ export default function EarthquakePage() {
     
     if (newFilters.startDate || newFilters.endDate) {
       appFilter.date = {};
-      if (newFilters.startDate) appFilter.date.start = new Date(newFilters.startDate);
-      if (newFilters.endDate) appFilter.date.end = new Date(newFilters.endDate);
+      if (newFilters.startDate) appFilter.date.start = newFilters.startDate; // Use string directly
+      if (newFilters.endDate) appFilter.date.end = newFilters.endDate; // Use string directly
     }
     
     setFilter(appFilter);
@@ -38,8 +38,8 @@ export default function EarthquakePage() {
     location: filter.location || '',
     minMagnitude: filter.magnitude?.min ?? 0,
     maxMagnitude: filter.magnitude?.max ?? 10,
-    startDate: filter.date?.start ? filter.date.start.toISOString().split('T')[0] : '',
-    endDate: filter.date?.end ? filter.date.end.toISOString().split('T')[0] : ''
+    startDate: filter.date?.start || '',
+    endDate: filter.date?.end || ''
   };
 
   return (

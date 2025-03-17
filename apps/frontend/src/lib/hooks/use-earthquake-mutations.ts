@@ -1,154 +1,120 @@
-import { gql, useMutation } from '@apollo/client';
-import type { Earthquake } from './use-earthquakes';
+import { useMutation } from '@apollo/client';
+import { 
+  CREATE_EARTHQUAKE_MUTATION, 
+  UPDATE_EARTHQUAKE_MUTATION, 
+  DELETE_EARTHQUAKE_MUTATION,
+  CreateEarthquakeInput,
+  UpdateEarthquakeInput
+} from '../graphql/mutations';
+import { GET_EARTHQUAKES, Earthquake } from '../graphql/queries';
 
-// GraphQL mutation for creating a new earthquake
-const CREATE_EARTHQUAKE = gql`
-  mutation CreateEarthquake($input: CreateEarthquakeInput!) {
-    createEarthquake(input: $input) {
-      id
-      location
-      magnitude
-      date
-      createdAt
-      updatedAt
-    }
-  }
-`;
+// Re-export types for backward compatibility
+export type { CreateEarthquakeInput, UpdateEarthquakeInput };
 
-// GraphQL mutation for updating an existing earthquake
-const UPDATE_EARTHQUAKE = gql`
-  mutation UpdateEarthquake($id: ID!, $input: UpdateEarthquakeInput!) {
-    updateEarthquake(id: $id, input: $input) {
-      id
-      location
-      magnitude
-      date
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-// GraphQL mutation for deleting an earthquake
-const DELETE_EARTHQUAKE = gql`
-  mutation DeleteEarthquake($id: ID!) {
-    deleteEarthquake(id: $id)
-  }
-`;
-
-// Types for input data
-export interface CreateEarthquakeInput {
-  location: string;
-  magnitude: number;
-  date: Date;
+interface UseCreateEarthquakeOptions {
+  onSuccess?: (data: { createEarthquake: Earthquake }) => void;
+  onError?: (error: Error) => void;
 }
 
-export interface UpdateEarthquakeInput {
-  location?: string;
-  magnitude?: number;
-  date?: Date;
-}
+export const useCreateEarthquake = (options: UseCreateEarthquakeOptions = {}) => {
+  const { onSuccess, onError } = options;
 
-// Hook for creating a new earthquake
-export const useCreateEarthquake = () => {
-  const [createEarthquake, { loading, error }] = useMutation<
-    { createEarthquake: Earthquake },
-    { input: CreateEarthquakeInput }
-  >(CREATE_EARTHQUAKE, {
-    update: (cache, { data }) => {
-      if (data?.createEarthquake) {
-        // Update cache logic would go here
-        // For now, we'll rely on refetching the query
-        cache.modify({
-          fields: {
-            earthquakes: (existingData = { edges: [], pageInfo: {} }) => {
-              return existingData;
-            }
-          }
-        });
-      }
+  const [createEarthquake, { loading, error }] = useMutation(
+    CREATE_EARTHQUAKE_MUTATION,
+    {
+      refetchQueries: [{ query: GET_EARTHQUAKES }],
+      onCompleted: onSuccess,
+      onError,
     }
-  });
+  );
+
+  const create = async (input: CreateEarthquakeInput) => {
+    try {
+      const response = await createEarthquake({
+        variables: { input },
+      });
+      return response.data?.createEarthquake;
+    } catch (err) {
+      console.error('Error creating earthquake:', err);
+      throw err;
+    }
+  };
 
   return {
-    createEarthquake: (input: CreateEarthquakeInput) => 
-      createEarthquake({ variables: { input } }),
+    createEarthquake: create,
     loading,
-    error
+    error,
   };
 };
 
-// Hook for updating an earthquake
-export const useUpdateEarthquake = () => {
-  const [updateEarthquake, { loading, error }] = useMutation<
-    { updateEarthquake: Earthquake },
-    { id: string; input: UpdateEarthquakeInput }
-  >(UPDATE_EARTHQUAKE, {
-    update: (cache, { data }) => {
-      if (data?.updateEarthquake) {
-        // Update the cache for the specific earthquake
-        cache.modify({
-          id: cache.identify({
-            __typename: 'Earthquake',
-            id: data.updateEarthquake.id
-          }),
-          fields: {
-            location: () => data.updateEarthquake.location,
-            magnitude: () => data.updateEarthquake.magnitude,
-            date: () => data.updateEarthquake.date,
-            updatedAt: () => data.updateEarthquake.updatedAt
-          }
-        });
-      }
+interface UseUpdateEarthquakeOptions {
+  onSuccess?: (data: { updateEarthquake: Earthquake }) => void;
+  onError?: (error: Error) => void;
+}
+
+export const useUpdateEarthquake = (options: UseUpdateEarthquakeOptions = {}) => {
+  const { onSuccess, onError } = options;
+
+  const [updateEarthquake, { loading, error }] = useMutation(
+    UPDATE_EARTHQUAKE_MUTATION,
+    {
+      refetchQueries: [{ query: GET_EARTHQUAKES }],
+      onCompleted: onSuccess,
+      onError,
     }
-  });
+  );
+
+  const update = async (id: string, input: UpdateEarthquakeInput) => {
+    try {
+      const response = await updateEarthquake({
+        variables: { id, input },
+      });
+      return response.data?.updateEarthquake;
+    } catch (err) {
+      console.error('Error updating earthquake:', err);
+      throw err;
+    }
+  };
 
   return {
-    updateEarthquake: (id: string, input: UpdateEarthquakeInput) => 
-      updateEarthquake({ variables: { id, input } }),
+    updateEarthquake: update,
     loading,
-    error
+    error,
   };
 };
 
-// Hook for deleting an earthquake
-export const useDeleteEarthquake = () => {
-  const [deleteEarthquake, { loading, error }] = useMutation<
-    { deleteEarthquake: boolean },
-    { id: string }
-  >(DELETE_EARTHQUAKE, {
-    update: (cache, { data }, { variables }) => {
-      if (data?.deleteEarthquake && variables?.id) {
-        // Remove the deleted earthquake from the cache
-        cache.modify({
-          fields: {
-            earthquakes: (existingData = { edges: [], pageInfo: {} }, { readField }) => {
-              const updatedEdges = existingData.edges.filter(
-                (edge: { __ref: string }) => readField('id', edge) !== variables.id
-              );
-              
-              return {
-                ...existingData,
-                edges: updatedEdges,
-                pageInfo: {
-                  ...existingData.pageInfo,
-                  totalCount: existingData.pageInfo.totalCount - 1
-                }
-              };
-            }
-          }
-        });
-        
-        // Also remove the individual earthquake from the cache
-        cache.evict({ id: cache.identify({ __typename: 'Earthquake', id: variables.id }) });
-        cache.gc();
-      }
+interface UseDeleteEarthquakeOptions {
+  onSuccess?: (data: { deleteEarthquake: boolean }) => void;
+  onError?: (error: Error) => void;
+}
+
+export const useDeleteEarthquake = (options: UseDeleteEarthquakeOptions = {}) => {
+  const { onSuccess, onError } = options;
+
+  const [deleteEarthquake, { loading, error }] = useMutation(
+    DELETE_EARTHQUAKE_MUTATION,
+    {
+      refetchQueries: [{ query: GET_EARTHQUAKES }],
+      onCompleted: onSuccess,
+      onError,
     }
-  });
+  );
+
+  const remove = async (id: string) => {
+    try {
+      const response = await deleteEarthquake({
+        variables: { id },
+      });
+      return response.data?.deleteEarthquake;
+    } catch (err) {
+      console.error('Error deleting earthquake:', err);
+      throw err;
+    }
+  };
 
   return {
-    deleteEarthquake: (id: string) => deleteEarthquake({ variables: { id } }),
+    deleteEarthquake: remove,
     loading,
-    error
+    error,
   };
 };

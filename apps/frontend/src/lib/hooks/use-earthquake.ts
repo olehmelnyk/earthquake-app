@@ -1,18 +1,5 @@
-import { gql, useQuery } from '@apollo/client';
-import type { Earthquake } from './use-earthquakes';
-
-const EARTHQUAKE_QUERY = gql`
-  query GetEarthquake($id: ID!) {
-    earthquake(id: $id) {
-      id
-      location
-      magnitude
-      date
-      createdAt
-      updatedAt
-    }
-  }
-`;
+import { useQuery } from '@apollo/client';
+import { GET_EARTHQUAKE, Earthquake } from '../graphql/queries';
 
 export interface UseEarthquakeOptions {
   id: string;
@@ -23,7 +10,7 @@ export const useEarthquake = (options: UseEarthquakeOptions) => {
   const { id, skip = false } = options;
 
   const { data, loading, error } = useQuery<{ earthquake: Earthquake }>(
-    EARTHQUAKE_QUERY,
+    GET_EARTHQUAKE,
     {
       variables: { id },
       skip: skip || !id,
@@ -31,7 +18,7 @@ export const useEarthquake = (options: UseEarthquakeOptions) => {
   );
 
   return {
-    earthquake: data?.earthquake,
+    earthquake: data?.earthquake || null,
     loading,
     error,
   };

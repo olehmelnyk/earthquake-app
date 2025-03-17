@@ -128,7 +128,6 @@ export function EarthquakeFilters({
                 startDate: dateRange?.from ? dateRange.from.toISOString().split('T')[0] : '',
                 endDate: dateRange?.to ? dateRange.to.toISOString().split('T')[0] : '',
               }));
-              onFilterChange(filters);
             }}
           />
         </div>

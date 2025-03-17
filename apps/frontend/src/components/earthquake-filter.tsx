@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button, Label, RangeSlider } from '@earthquake-nx/ui';
-import { EarthquakeFilterInput } from '../lib/hooks/use-earthquakes';
+import { EarthquakeFilterInput } from '../lib/graphql/queries';
 
 interface EarthquakeFilterProps {
   onFilterChange: (filter: EarthquakeFilterInput) => void;
@@ -41,8 +41,8 @@ export function EarthquakeFilter({ onFilterChange, initialFilter }: EarthquakeFi
 
     if (startDate || endDate) {
       newFilter.date = {};
-      if (startDate) newFilter.date.start = new Date(startDate);
-      if (endDate) newFilter.date.end = new Date(endDate);
+      if (startDate) newFilter.date.start = startDate; // Use string directly
+      if (endDate) newFilter.date.end = endDate; // Use string directly
     }
 
     setFilter(newFilter);
