@@ -1,8 +1,6 @@
 /**
  * Simple GraphQL server for testing purposes
  */
-import { existsSync } from 'fs';
-import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
@@ -10,7 +8,7 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 async function startTestServer() {
   console.log('🔍 Starting GraphQL test server...');
   console.log('Working directory:', process.cwd());
-  
+
   try {
     // Step 1: Initialize Prisma client
     console.log('Step 1: Initializing Prisma client...');
@@ -18,17 +16,17 @@ async function startTestServer() {
       log: ['query', 'error', 'warn'],
     });
     console.log('✅ Prisma client initialized');
-    
+
     // Step 2: Import GraphQL schema and resolvers
     console.log('Step 2: Importing GraphQL schema and resolvers...');
-    
+
     // Import the TypeScript files directly
     const { typeDefs } = await import('../packages/graphql/src/lib/schema/typeDefs');
     console.log('✅ TypeDefs imported successfully');
-    
+
     const { resolvers } = await import('../packages/graphql/src/lib/resolvers/index');
     console.log('✅ Resolvers imported successfully');
-    
+
     // Step 3: Create Apollo Server
     console.log('Step 3: Creating Apollo Server...');
     const server = new ApolloServer({
@@ -43,7 +41,7 @@ async function startTestServer() {
           locations: error.locations,
           extensions: error.extensions,
         }, null, 2));
-        
+
         // Return a more detailed error for debugging
         return {
           message: error.message,
@@ -53,7 +51,7 @@ async function startTestServer() {
       },
     });
     console.log('✅ Apollo Server created');
-    
+
     // Step 4: Start the server
     console.log('Step 4: Starting standalone server...');
     const { url } = await startStandaloneServer(server, {
@@ -62,12 +60,12 @@ async function startTestServer() {
       }),
       listen: { port: 4000 },
     });
-    
+
     console.log(`
     🚀 GraphQL server ready at: ${url}
-    
+
     Try these sample queries:
-    
+
     1. Get all earthquakes:
        query {
          earthquakes {
@@ -84,7 +82,7 @@ async function startTestServer() {
            }
          }
        }
-    
+
     2. Get earthquakes with filters:
        query {
          earthquakes(
@@ -104,7 +102,7 @@ async function startTestServer() {
          }
        }
     `);
-    
+
   } catch (error) {
     console.error('❌ Error starting GraphQL test server:', error);
     console.log('\n⚠️ Troubleshooting Tips:');

@@ -10,7 +10,7 @@ const swcJestConfig = JSON.parse(
 swcJestConfig.swcrc = false;
 
 export default {
-  displayName: '@earthquake-nx/graphql',
+  displayName: '@earthquake-app/graphql',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "composite": true,
     "declarationMap": true,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": false,
     "importHelpers": true,
     "isolatedModules": true,
     "lib": ["es2022"],
@@ -15,6 +15,19 @@
     "noUnusedLocals": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "es2022"
+    "target": "es2022",
+    "baseUrl": ".",
+    "paths": {
+      "@earthquake-app/db": ["./packages/db/src/index.ts"],
+      "@earthquake-app/db/*": ["./packages/db/src/*"],
+      "@earthquake-app/graphql": ["./packages/graphql/src/index.ts"],
+      "@earthquake-app/graphql/*": ["./packages/graphql/src/*"],
+      "@earthquake-app/types": ["./packages/types/src/index.ts"],
+      "@earthquake-app/types/*": ["./packages/types/src/*"],
+      "@earthquake-app/ui": ["./packages/ui/src/index.ts"],
+      "@earthquake-app/ui/*": ["./packages/ui/src/*"],
+      "@earthquake-app/utils": ["./packages/utils/src/index.ts"],
+      "@earthquake-app/utils/*": ["./packages/utils/src/*"]
+    }
   }
 }

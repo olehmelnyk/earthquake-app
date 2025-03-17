@@ -1,5 +1,5 @@
 export default {
-  displayName: '@earthquake-nx/ui',
+  displayName: '@earthquake-app/ui',
   preset: '../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',

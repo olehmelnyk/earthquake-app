@@ -2,8 +2,7 @@ import { NextRequest } from 'next/server';
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
 import { ApolloServer } from '@apollo/server';
 import { PrismaClient } from '@prisma/client';
-import { resolvers } from '../../../../../../packages/graphql/src/lib/resolvers';
-import { typeDefs } from '../../../../../../packages/graphql/src/lib/schema/typeDefs';
+import { resolvers, typeDefs } from '@earthquake-app/graphql';
 
 // Initialize Prisma client (only one instance per server)
 const prisma = new PrismaClient({

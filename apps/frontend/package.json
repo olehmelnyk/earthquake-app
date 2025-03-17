@@ -1,5 +1,5 @@
 {
-  "name": "@earthquake-nx/frontend",
+  "name": "@earthquake-app/frontend",
   "version": "0.0.1",
   "private": true,
   "nx": {
@@ -12,10 +12,12 @@
     "@apollo/client": "^3.13.4",
     "@apollo/server": "^4.10.0",
     "@as-integrations/next": "^3.2.0",
+    "@earthquake-app/graphql": "workspace:*",
+    "@earthquake-app/ui": "workspace:*",
     "graphql": "^16.10.0",
-    "next": "~15.1.4",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "next": "14.1.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {

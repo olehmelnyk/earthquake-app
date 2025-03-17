@@ -20,14 +20,14 @@ interface WhereClause {
   };
 }
 
-interface PageInfo {
+export interface PageInfo {
   totalCount: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
 }
 
-interface EarthquakesResponse {
-  edges: any[];
+export interface EarthquakesResponse {
+  edges: Array<{ id: string; [key: string]: unknown }>;
   pageInfo: PageInfo;
 }
 

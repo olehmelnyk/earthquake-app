@@ -1,5 +1,5 @@
 {
-  "name": "@earthquake-nx/source",
+  "name": "@earthquake-app/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -61,5 +61,9 @@
     "overrides": {
       "cross-spawn@<6.0.6": ">=6.0.6"
     }
-  }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

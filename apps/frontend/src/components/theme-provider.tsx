@@ -29,7 +29,7 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(defaultTheme);
-  
+
   // Initialize theme from localStorage only after component is mounted (client-side only)
   useEffect(() => {
     if (isBrowser) {
@@ -42,7 +42,7 @@ export function ThemeProvider({
 
   useEffect(() => {
     if (!isBrowser) return;
-    
+
     const root = window.document.documentElement;
 
     root.classList.remove("light", "dark");

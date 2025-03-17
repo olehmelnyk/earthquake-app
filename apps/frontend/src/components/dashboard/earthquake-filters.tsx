@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Button } from '@earthquake-nx/ui';
-import { Input } from '@earthquake-nx/ui';
-import { Label } from '@earthquake-nx/ui';
+import { Button } from '@earthquake-app/ui';
+import { Input } from '@earthquake-app/ui';
+import { Label } from '@earthquake-app/ui';
 
 export interface FilterValues {
   location?: string;

@@ -1,5 +1,5 @@
 {
-  "name": "@earthquake-nx/graphql",
+  "name": "@earthquake-app/graphql",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -15,7 +15,9 @@
     }
   },
   "scripts": {
-    "dev": "tsx src/dev-server.ts"
+    "dev": "tsx src/dev-server.ts",
+    "build": "swc src -d dist --strip-leading-paths",
+    "watch": "tsc --watch"
   },
   "nx": {
     "tags": [
@@ -29,6 +31,8 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@swc/cli": "~0.3.12",
+    "@swc/core": "~1.5.7",
     "graphql-tag": "^2.12.6",
     "prisma": "^6.5.0",
     "tsx": "^4.3.0"

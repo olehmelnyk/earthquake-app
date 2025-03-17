@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { MainLayout } from '../components/layout/main-layout';
-import { EarthquakeFilters } from '@earthquake-nx/ui';
+import { EarthquakeFilters } from '@earthquake-app/ui';
 import { EarthquakeTable } from '../components/earthquake-table';
 import type { EarthquakeFilterInput } from '../lib/graphql/queries';
 
@@ -12,24 +12,24 @@ export default function EarthquakePage() {
   const handleFilterChange = (newFilters: any) => {
     // Convert from UI package filter format to app-specific format
     const appFilter: EarthquakeFilterInput = {};
-    
+
     if (newFilters.location) {
       appFilter.location = newFilters.location;
     }
-    
+
     if (newFilters.minMagnitude !== undefined || newFilters.maxMagnitude !== undefined) {
       appFilter.magnitude = {
         min: newFilters.minMagnitude ?? 0,
         max: newFilters.maxMagnitude ?? 10
       };
     }
-    
+
     if (newFilters.startDate || newFilters.endDate) {
       appFilter.date = {};
       if (newFilters.startDate) appFilter.date.start = newFilters.startDate; // Use string directly
       if (newFilters.endDate) appFilter.date.end = newFilters.endDate; // Use string directly
     }
-    
+
     setFilter(appFilter);
   };
 
@@ -52,7 +52,7 @@ export default function EarthquakePage() {
 
         <div className="flex flex-col md:flex-row gap-6">
           <div className="w-full md:w-80 shrink-0">
-            <EarthquakeFilters 
+            <EarthquakeFilters
               initialFilters={uiFilters}
               onFilterChange={handleFilterChange}
             />

@@ -3,17 +3,6 @@
 import { ApolloClient, ApolloProvider, InMemoryCache, HttpLink } from '@apollo/client';
 import { useMemo, type ReactNode } from 'react';
 
-// Environment-aware GraphQL endpoint URL
-const getGraphqlEndpoint = (): string => {
-  // In production, use the absolute path
-  if (process.env.NODE_ENV === 'production') {
-    return '/api/graphql';
-  }
-  
-  // In development, use the complete URL including hostname
-  return 'http://localhost:4000/api/graphql';
-};
-
 interface ApolloWrapperProps {
   children: ReactNode;
 }
@@ -22,7 +11,7 @@ export function ApolloWrapper({ children }: ApolloWrapperProps): JSX.Element {
   const client = useMemo(() => {
     return new ApolloClient({
       link: new HttpLink({
-        uri: getGraphqlEndpoint(),
+        uri: '/api/graphql',
         // Include credentials for cookie-based auth if needed
         credentials: 'same-origin',
       }),

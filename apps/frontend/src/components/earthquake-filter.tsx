@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button, Label, RangeSlider } from '@earthquake-nx/ui';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button, Label, RangeSlider } from '@earthquake-app/ui';
 import { EarthquakeFilterInput } from '../lib/graphql/queries';
 
 interface EarthquakeFilterProps {
@@ -104,7 +104,7 @@ export function EarthquakeFilter({ onFilterChange, initialFilter }: EarthquakeFi
               />
             </div>
           </div>
-          
+
           {/* Magnitude range slider */}
           <div className="space-y-4 md:col-span-2">
             <div className="flex justify-between items-center">
@@ -113,7 +113,7 @@ export function EarthquakeFilter({ onFilterChange, initialFilter }: EarthquakeFi
                 {magnitudeRange[0].toFixed(1)} - {magnitudeRange[1].toFixed(1)}
               </div>
             </div>
-            
+
             <RangeSlider
               min={0}
               max={10}

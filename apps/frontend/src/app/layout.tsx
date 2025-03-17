@@ -1,13 +1,11 @@
 import type { Metadata } from 'next'
-import './global.css'; 
-import '@earthquake-nx/ui'; 
-import { ApolloWrapper } from '../lib/apollo-provider';
-import { ThemeProvider } from '../components/theme-provider';
-import { Toaster } from "@earthquake-nx/ui";
+import './global.css';
+import { Toaster } from "@earthquake-app/ui";
+import { ClientProviders } from '../components/client-providers';
 
 export const metadata: Metadata = {
   title: 'Earthquake App',
-  description: 'Earthquake App',
+  description: 'Take home assignment',
 }
 
 export default function RootLayout({
@@ -16,14 +14,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body suppressHydrationWarning className="m-0 p-0 w-full min-h-screen">
-        <ThemeProvider defaultTheme="system" storageKey="theme">
-          <ApolloWrapper>
+    <html lang="en" suppressHydrationWarning className="h-full">
+      <head />
+      <body className="h-full bg-background text-foreground antialiased">
+        <ClientProviders>
+          <main className="min-h-screen">
             {children}
-            <Toaster />
-          </ApolloWrapper>
-        </ThemeProvider>
+          </main>
+          <Toaster />
+        </ClientProviders>
       </body>
     </html>
   )

@@ -24,7 +24,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@earthquake-nx/ui';
+} from '@earthquake-app/ui';
 import {
   GET_EARTHQUAKES,
   GET_FILTER_OPTIONS,
@@ -89,6 +89,8 @@ export function EarthquakeDashboard() {
 
   // Parse query parameters on initial load
   useEffect(() => {
+    if (!searchParams) return;
+
     const locationParam = searchParams.get('location');
     const minMagnitudeParam = searchParams.get('minMagnitude');
     const maxMagnitudeParam = searchParams.get('maxMagnitude');
@@ -230,7 +232,7 @@ export function EarthquakeDashboard() {
     });
 
     // Update URL with new parameters
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() || '');
 
     // Update or remove location parameter
     if (values.location) {
@@ -279,7 +281,7 @@ export function EarthquakeDashboard() {
     });
 
     // Update URL with pagination parameters
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() || '');
     params.set('skip', newPagination.skip.toString());
     params.set('take', Math.min(newPagination.take, 10).toString());
 
@@ -300,7 +302,7 @@ export function EarthquakeDashboard() {
     });
 
     // Update URL with sorting parameters
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() || '');
     params.set('sortField', sortField);
     params.set('sortDirection', direction);
 
@@ -324,7 +326,7 @@ export function EarthquakeDashboard() {
 
     searchTimeoutRef.current = setTimeout(() => {
       // Update URL with search parameter
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams?.toString() || '');
 
       if (term) {
         params.set('search', term);
@@ -588,15 +590,15 @@ export function EarthquakeDashboard() {
 
   // Prepare initial filter values based on query parameters and filter options
   const initialFilters: FilterValues = {
-    location: searchParams.get('location') || '',
-    minMagnitude: searchParams.get('minMagnitude')
-      ? parseFloat(searchParams.get('minMagnitude') as string)
+    location: searchParams?.get('location') || '',
+    minMagnitude: searchParams?.get('minMagnitude')
+      ? parseFloat(searchParams?.get('minMagnitude') as string)
       : (filterOptions?.magnitudeRange?.min || 0),
-    maxMagnitude: searchParams.get('maxMagnitude')
-      ? parseFloat(searchParams.get('maxMagnitude') as string)
+    maxMagnitude: searchParams?.get('maxMagnitude')
+      ? parseFloat(searchParams?.get('maxMagnitude') as string)
       : (filterOptions?.magnitudeRange?.max || 10),
-    startDate: searchParams.get('startDate') || '',
-    endDate: searchParams.get('endDate') || '',
+    startDate: searchParams?.get('startDate') || filterOptions?.dateRange?.earliest || '',
+    endDate: searchParams?.get('endDate') || filterOptions?.dateRange?.latest || '',
   };
 
   return (
