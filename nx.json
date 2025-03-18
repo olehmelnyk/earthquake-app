@@ -16,9 +16,7 @@
     {
       "plugin": "@nx/js/typescript",
       "options": {
-        "typecheck": {
-          "targetName": "typecheck"
-        },
+        "typecheck": { "targetName": "typecheck" },
         "build": {
           "targetName": "build",
           "configName": "tsconfig.lib.json",
@@ -38,38 +36,16 @@
         "watchDepsTargetName": "watch-deps"
       }
     },
-    {
-      "plugin": "@nx/playwright/plugin",
-      "options": {
-        "targetName": "e2e"
-      }
-    },
-    {
-      "plugin": "@nx/jest/plugin",
-      "options": {
-        "targetName": "test"
-      }
-    }
+    { "plugin": "@nx/playwright/plugin", "options": { "targetName": "e2e" } },
+    { "plugin": "@nx/jest/plugin", "options": { "targetName": "test" } }
   ],
   "targetDefaults": {
-    "e2e-ci--**/*": {
-      "dependsOn": ["^build"]
-    },
-    "test": {
-      "dependsOn": ["^build"]
-    }
+    "e2e-ci--**/*": { "dependsOn": ["^build"] },
+    "test": { "dependsOn": ["^build"] }
   },
   "generators": {
-    "@nx/next": {
-      "application": {
-        "style": "css",
-        "linter": "none"
-      }
-    },
-    "@nx/react": {
-      "library": {
-        "unitTestRunner": "jest"
-      }
-    }
-  }
+    "@nx/next": { "application": { "style": "css", "linter": "none" } },
+    "@nx/react": { "library": { "unitTestRunner": "jest" } }
+  },
+  "nxCloudId": "67d8c9f0bccb868e9e71671a"
 }
